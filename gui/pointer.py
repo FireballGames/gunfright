@@ -59,7 +59,7 @@ class Pointer(pygame.sprite.Sprite):
         import pygame, sound
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
             if self.in_active() and self.player.shoot():
-                sound.play_shoot()
+                sound.play('res/sounds/shot.mp3')
                 self.intersect(moneybags, self.player)
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
             print "Right"

@@ -31,7 +31,7 @@ def init_sound(main_theme):
     
 def play(sound):
     print "Playing sound "+sound
-    pygame.mixer.Sound('res/sounds/duel.mp3').play()
+    pygame.mixer.Sound(sound).play()
     
 def play_intro():
     print 'Playing intro'
