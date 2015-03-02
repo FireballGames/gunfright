@@ -22,17 +22,17 @@
 #  
 #  
 
-def show():
+def show(params):
     import gui, pygame
     
     print "Showing intro"
     screen = gui.screen.Screen({
-        'background': pygame.image.load("res/intro.png"),
-        'bg_pos':     (0, 0),
-        'sound':      "res/sounds/duel.mp3",
-        'sleep':      2,
-        'showing':    False,
-        'interface':  False
+        'background': pygame.image.load(params['background']),
+        'bg_pos':     params['bg_pos'],
+        'sound':      params['sound'],
+        'sleep':      params['sleep'],
+        'showing':    params['showing'],
+        'interface':  params['interface']
     })
     screen.show_screen(gui.window)
 

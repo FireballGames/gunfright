@@ -41,18 +41,21 @@ class MainGui(screen.Screen):
         window.blit(text.render("Time  "+str(level.seconds()), True, (255,0,0)), (500, 500))
         window.blit(text.render(str(g.player.shots),           True, (255,0,0)), (200, 475))
 
-def init_gui(config):
+def init_win(config):
     global window
     
-    pygame.init()
-    window = pygame.display.set_mode(config['win_size'])
+    window = pygame.display.set_mode(config['size'])
     pygame.display.set_caption(config['title'])
     icon = pygame.image.load(config['icon']).convert_alpha()       
     pygame.display.set_icon(icon)
+
+def init_gui(config):
+    pygame.init()
+    init_win(config['window'])
     pygame.mouse.set_visible(False)
 
     import sound
-    sound.init_sound('res/sounds/duel.mp3')
+    sound.init_sound(config['main_theme'])
     
 def init_game(game):
     global p, i, g

@@ -26,10 +26,6 @@ import yaml
 
 # __getitem__
 params = {
-    'win_size':  [800, 600],
-    'title':     'Уравнение Кольта',
-    'icon':      'res/icon.png',
-    'text_size': 34,
 }
 
 def load(filename):

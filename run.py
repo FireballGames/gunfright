@@ -30,7 +30,7 @@ def main():
     gui.init_gui(config.params)
     
     import screens.intro
-    screens.intro.show()
+    screens.intro.show(config.params['screens']['intro'])
 
     import game
     mygame = game.Game(config.params)

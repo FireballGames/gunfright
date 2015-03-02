@@ -1,6 +1,19 @@
-win_size:   
-- 800
-- 600
-win_title:  Уравнение Кольта
-win_icon:   res/icon.png
+window:
+  size:
+  - 800
+  - 600
+  title: Gunfright
+  title_ru: Уравнение Кольта
+  icon:  res/icon.png
 text_size:  34
+main_theme: res/sounds/duel.mp3
+screens:
+  intro:
+    background: res/intro.png
+    bg_pos:     
+    - 0
+    - 0
+    sound:      res/sounds/duel.mp3
+    sleep:      2
+    showing:    False
+    interface:  False
