@@ -2,8 +2,7 @@ window:
   size:
   - 800
   - 600
-  title: Gunfright
-  title_ru: Уравнение Кольта
+  title: 'Уравнение Кольта'
   icon:  res/icon.png
 text_size:  34
 main_theme: res/sounds/duel.mp3

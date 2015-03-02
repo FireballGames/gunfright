@@ -45,7 +45,7 @@ def init_win(config):
     global window
     
     window = pygame.display.set_mode(config['size'])
-    pygame.display.set_caption(config['title'])
+    pygame.display.set_caption(config['title'].encode("utf8"))
     icon = pygame.image.load(config['icon']).convert_alpha()       
     pygame.display.set_icon(icon)
 
