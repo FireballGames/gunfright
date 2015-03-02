@@ -34,8 +34,6 @@ class Player():
         if 'player' in config:
             self.player.config.update(config['player'])
 
-        for key in config.keys():
-            print key+'='+str(config[key])
         self.levelups = self.config['levelups']
             
     def levelup(self):

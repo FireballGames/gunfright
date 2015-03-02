@@ -1,0 +1,6 @@
+win_size:   
+- 800
+- 600
+win_title:  Уравнение Кольта
+win_icon:   res/icon.png
+text_size:  34

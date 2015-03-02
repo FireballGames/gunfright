@@ -22,6 +22,7 @@
 #  
 #  
 
+import yaml
 
 # __getitem__
 params = {
@@ -31,9 +32,16 @@ params = {
     'text_size': 34,
 }
 
+def load(filename):
+    global params;
+    params.update(yaml.load(open(filename, 'r')))
+    print params
+    return params
+
 def main():
-    return 0
+    global params;
+    print  params
+    return params
 
 if __name__ == '__main__':
     main()
-

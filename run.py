@@ -24,7 +24,7 @@
 
 def main():
     import config
-    print config.params
+    params = config.load('game.yml')
 
     import gui
     gui.init_gui(config.params)
