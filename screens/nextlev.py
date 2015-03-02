@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  intro.py
+#  nextlev.py
 #  
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
 #  
@@ -22,22 +22,38 @@
 #  
 #  
 
-def show():
-    import gui
+import gui
+g = 0
+
+class NextLev(gui.screen.Screen):
+    def blit_screen(self, window):
+        global g
+        
+        import pygame, config
+        text = pygame.font.Font(None, config.params['text_size'])
+        window.blit(text.render("Level "+str(g.player.level), True, (255, 255, 255)), (400, 300))
+
+
+def show(game):
+    import pygame
+    global g
+    g = game
     
-    print "Showing intro"
-    screen = gui.Screen({
-        'background': "res/intro.png",
+    print "Showing next level"
+    screen = NextLev({
+        'background': pygame.image.load("res/town.png"),
         'bg_pos':     (0, 0),
-        'sound':      "intro",
-        'sleep':      2
+        'sound':      False,
+        'sleep':      2,
+        'showing':    False,
+        'interface':  False
     })
-    screen.show_screen()
+    screen.show_screen(gui.window)
 
 def main():
     import game
-    game = Game({})
-    show(game)
+    g = Game({})
+    show(g)
     return 0
 
 if __name__ == '__main__':

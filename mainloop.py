@@ -77,12 +77,11 @@ def show(game):
         
         print game.lost
     
-        import nextlev
-        nextlev.show(game)
+        import screens.nextlev
+        screens.nextlev.show(game)
 
-        import shootmoney
-        shootmoney.show(game, Level(game, level))
-    
+        import screens.shootmoney
+        screens.shootmoney.show(game, Level(game, level))
 
 def main():
     import game

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  gui.py
+#  __init__.py
 #  
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
 #  
@@ -22,40 +22,23 @@
 #  
 #  
 
-import pygame
+import pygame, screen
 
 window = 0
 p      = 0
+i      = 0
+g      = 0
+level  = 0
 
-class Screen(pygame.sprite.Sprite):
-    def __init__(self, config):
-        pygame.sprite.Sprite.__init__(self)
-        # "res/intro.png"
-        # 2
-        # (0, 0)
-        # intro
-        self.image  = pygame.image.load(config["background"])
-        self.sleep  = config["sleep"]
-        self.bg_pos = config["bg_pos"]
-        self.sound  = config["sound"]
-
-    def blit_screen(self):
-        pass
-                
-    def show_screen(self):
-        global window
+class MainGui(screen.Screen):
+    def blit_screen(self, window):
+        global g, level
         
-        if self.sound:
-            import sound
-            sound.play(self.sound)
-        
-        window.blit(self.image, self.bg_pos)
-        self.blit_screen()
-        
-        pygame.display.update()
-        if self.sleep:
-            import time
-            time.sleep(self.sleep)
+        import pygame, config
+        text = pygame.font.Font(None, config.params['text_size'])
+        window.blit(text.render("Money "+str(g.player.score),  True, (255,0,0)), (500, 450))
+        window.blit(text.render("Level "+str(level.score),     True, (255,0,0)), (500, 475))
+        window.blit(text.render("Time  "+str(level.seconds()), True, (255,0,0)), (500, 500))
 
 def init_gui(config):
     global window
@@ -71,28 +54,44 @@ def init_gui(config):
     sound.init_sound()
     
 def init_game(game):
-    global p
+    global p, i, g
     import pointer
-    p = pointer.Pointer(game.player)
+    g = game
+    p = pointer.Pointer(g.player)
+    i = MainGui({
+        'background': pygame.image.load("res/interface.png"),
+        'bg_pos':     (0, 0),
+        'sound':      False,
+        'sleep':      False,
+        'showing':    False,
+        'interface':  False
+    })
     
 def win():
     global window
     
-    import time
-    background_w = pygame.image.load("res/win.png")
-    window.blit(background_w, (0,0))
-    pygame.display.update()
-    time.sleep(2)
+    s = screen.Screen({
+        'background': pygame.image.load("res/win.png"),
+        'bg_pos':     (0, 0),
+        'sound':      False,
+        'sleep':      2,
+        'showing':    False,
+        'interface':  False
+    })
+    s.show_screen(window)
 
 def loose():
     global window
     
-    import pygame, sound, time
-    background_l = pygame.image.load("res/loose.png")
-    window.blit(background_l, [0,0])
-    pygame.display.update()
-    sound.play_loose()
-    time.sleep(2)
+    s = screen.Screen({
+        'background': pygame.image.load("res/loose.png"),
+        'bg_pos':     (0, 0),
+        'sound':      "loose",
+        'sleep':      2,
+        'showing':    False,
+        'interface':  False
+    })
+    s.show_screen(window)
 
 def main():
     return 0

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  run.py
+#  intro.py
 #  
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
 #  
@@ -22,23 +22,24 @@
 #  
 #  
 
+def show():
+    import gui, pygame
+    
+    print "Showing intro"
+    screen = gui.screen.Screen({
+        'background': pygame.image.load("res/intro.png"),
+        'bg_pos':     (0, 0),
+        'sound':      "intro",
+        'sleep':      2,
+        'showing':    False,
+        'interface':  False
+    })
+    screen.show_screen(gui.window)
+
 def main():
-    import config
-    print config.params
-
-    import gui
-    gui.init_gui(config.params)
-    
-    import screens.intro
-    screens.intro.show()
-
     import game
-    mygame = game.Game(config.params)
-    gui.init_game(mygame)
-
-    import mainloop
-    mainloop.show(mygame)
-    
+    game = Game({})
+    show(game)
     return 0
 
 if __name__ == '__main__':

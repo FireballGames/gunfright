@@ -22,10 +22,10 @@
 #  
 #  
 
-import pygame, random, pointer
+import pygame, random, gui
 
 class Moneybag(pygame.sprite.Sprite):
-    def __init__(self, level):
+    def __init__(self, level, config):
         pygame.sprite.Sprite.__init__(self)
         self.image  = level.moneybag
 
@@ -33,7 +33,7 @@ class Moneybag(pygame.sprite.Sprite):
 
         self.dir = level.dir()
 
-        self.boxsize = (800, 600)
+        self.boxsize = config['boxsize']
         self.padding = 64
         self.start   = True
         self.ticks   = 0
@@ -60,61 +60,71 @@ class Moneybag(pygame.sprite.Sprite):
         else:
             return [self.image, self.rect]
 
+class ShootMoney(gui.screen.Screen):
+    
+    def blit_screen(self, window):
+        import gui
+        global moneybags
+        
+        if gui.g.lost:
+            self.showing = False
+            return self.showing;
+
+        if gui.level.finish():
+            gui.g.end_lev()
+            self.showing = False
+            return self.showing;
+        
+        if gui.level.can_add_bag():
+            rect = self.image.get_rect()
+            moneybags.add(Moneybag(gui.level, {
+                'boxsize': [rect.width, rect.height]
+            }))
+            
+        import pygame, config
+        for moneybag in moneybags:
+            img = moneybag.move()
+            if img:
+                window.blit(*img)
+        gui.window.blit(*gui.p.move())
+        return self.showing         
+
+    def init_win(self):
+        import pygame
+        global moneybags
+    
+        moneybags = pygame.sprite.Group()
+        
+    def process_event(self, e):
+        import gui
+        if e.type == pygame.QUIT:
+            self.showing = False
+            gui.g.stop()
+        
+        gui.p.process_event(e, moneybags)
+    
 moneybags = 0
-interface = 0
 
-def init_win():
-    import pygame
-    global moneybags, interface
-    
-    moneybags = pygame.sprite.Group()
-    interface = pygame.image.load("res/interface.png")
-
-def show_screen(player, level):
-    import gui
-    global interface, moneybags
-    
-    gui.window.blit(interface,  (0, 0))
-    gui.window.blit(level.background, (16, 16))
-    
-    import pygame, config
-    text = pygame.font.Font(None, config.params['text_size'])
-    gui.window.blit(text.render("Money "+str(player.score),    True, (255,0,0)), (500, 450))
-    gui.window.blit(text.render("Level "+str(level.score),     True, (255,0,0)), (500, 475))
-    gui.window.blit(text.render("Time  "+str(level.seconds()), True, (255,0,0)), (500, 500))
-    for moneybag in moneybags:
-        img = moneybag.move()
-        if img:
-            gui.window.blit(*img)
-    gui.window.blit(*gui.p.move())
-    pygame.display.flip()
-    pygame.time.delay(10)         
-
-def show(game, level):
+def show(game, newlevel):
     global moneybags
     
-    import gui, pygame, sound
+    import gui, pygame
     
-    init_win()
+    gui.level = newlevel
+    gui.g     = game
 
-    while True:
-        for e in pygame.event.get():
-            if e.type == pygame.QUIT:
-                done = False
-                game.stop()
-            gui.p.process_event(e, moneybags)
-        
-        if game.lost:
-            break;
-        
-        if level.finish():
-            game.end_lev()
-            break;
-
-        if level.can_add_bag():
-            moneybags.add(Moneybag(level))
-
-        show_screen(game.player, level)
+    print "Showing shooter"
+    screen = ShootMoney({
+        'background': gui.level.background,
+        'bg_pos':     (32, 32),
+        'sound':      False,
+        'sleep':      False,
+        'showing':    True,
+        'interface':  gui.i
+    })
+    screen.init_win()
+    print gui.i
+    screen.show_screen(gui.window)
 
 def main():
     show()
