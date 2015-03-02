@@ -52,7 +52,7 @@ def init_gui(config):
     pygame.mouse.set_visible(False)
 
     import sound
-    sound.init_sound()
+    sound.init_sound('res/sounds/duel.mp3')
     
 def init_game(game):
     global p, i, g

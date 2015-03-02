@@ -22,14 +22,16 @@
 #  
 #  
 
-def init_sound():
-    print 'Initialize sound'
-    # pygame.mixer.init()
-    # pygame.mixer.music.load("Data/Sounds/theme.mp3")
-    # pygame.mixer.music.play()
+import pygame
+
+def init_sound(main_theme):
+    pygame.mixer.init()
+    pygame.mixer.music.load(main_theme)
+    pygame.mixer.music.play()
     
 def play(sound):
     print "Playing sound "+sound
+    pygame.mixer.Sound('res/sounds/duel.mp3').play()
     
 def play_intro():
     print 'Playing intro'

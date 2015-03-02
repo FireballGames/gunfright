@@ -29,7 +29,7 @@ def show():
     screen = gui.screen.Screen({
         'background': pygame.image.load("res/intro.png"),
         'bg_pos':     (0, 0),
-        'sound':      "intro",
+        'sound':      "res/sounds/duel.mp3",
         'sleep':      2,
         'showing':    False,
         'interface':  False
