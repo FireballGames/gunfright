@@ -28,6 +28,7 @@ class Player():
     }
     score   = 0
     level   = 0
+    shots   = 6
     
     def __init__(self, config):
         if 'player' in config:
@@ -43,6 +44,18 @@ class Player():
             self.levelups.append(new_lev)
         self.level += 1
         self.next_lev = self.levelups[self.level - 1]
+        
+    def shoot(self):
+        if(self.shots > 0):
+            self.shots -= 1
+            return True
+        else:
+            return False
+        
+    def reload(self):
+        if self.score > 100:
+            self.score -= 100
+            self.shots =  6
     
 def main():
     return 0

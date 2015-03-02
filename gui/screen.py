@@ -33,6 +33,7 @@ class Screen(pygame.sprite.Sprite):
         self.sound     = config["sound"]
         self.showing   = config["showing"]
         self.interface = config["interface"]
+        self.rect      = self.image.get_rect()
         print config
 
     def blit_screen(self, window):

@@ -39,6 +39,7 @@ class MainGui(screen.Screen):
         window.blit(text.render("Money "+str(g.player.score),  True, (255,0,0)), (500, 450))
         window.blit(text.render("Level "+str(level.score),     True, (255,0,0)), (500, 475))
         window.blit(text.render("Time  "+str(level.seconds()), True, (255,0,0)), (500, 500))
+        window.blit(text.render(str(g.player.shots),           True, (255,0,0)), (200, 475))
 
 def init_gui(config):
     global window

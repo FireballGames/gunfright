@@ -25,7 +25,7 @@
 import pygame
 
 class Pointer(pygame.sprite.Sprite):
-    def __init__(self, player):
+    def __init__(self, player, active = False):
         pygame.sprite.Sprite.__init__(self)
         self.image  = pygame.image.load("res/mouse.png")
         self.image.set_colorkey([255, 0, 255])
@@ -33,6 +33,7 @@ class Pointer(pygame.sprite.Sprite):
         self.rect.x = 800/2
         self.rect.y = 600/2
         self.player = player
+        self.active = active
         
     def move(self):
         position    = pygame.mouse.get_pos() 
@@ -40,20 +41,29 @@ class Pointer(pygame.sprite.Sprite):
         self.rect.y = position[1]
         return [self.image, self.rect]
     
+    def in_active(self):
+        if not self.active:
+            return true
+            
+        return pygame.sprite.spritecollide(self, [self.active], dokill=False)
+        
     def intersect(self, sprites, player):
         result = pygame.sprite.spritecollide(self, sprites, dokill=True)
         if result:
             import sound
             for sprite in result:
                 player.score += 100
-                print sprite
                 sound.play_hit()
     
     def process_event(self, e, moneybags):
         import pygame, sound
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
-            self.intersect(moneybags, self.player)
-            sound.play_shoot()
+            if self.in_active() and self.player.shoot():
+                sound.play_shoot()
+                self.intersect(moneybags, self.player)
+        if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
+            print "Right"
+            self.player.reload()
 
 def main():
     return 0

@@ -90,9 +90,10 @@ class ShootMoney(gui.screen.Screen):
         return self.showing         
 
     def init_win(self):
-        import pygame
+        import pygame, gui
         global moneybags
     
+        gui.p.active = self
         moneybags = pygame.sprite.Group()
         
     def process_event(self, e):
@@ -123,8 +124,8 @@ def show(game, newlevel):
         'interface':  gui.i
     })
     screen.init_win()
-    print gui.i
     screen.show_screen(gui.window)
+    gui.p.active = False
 
 def main():
     show()
