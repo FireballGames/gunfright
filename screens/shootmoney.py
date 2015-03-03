@@ -91,7 +91,7 @@ class ShootMoney(gui.screen.PlayScreen):
             img = moneybag.move()
             if img:
                 window.blit(*img)
-        gui.window.blit(*gui.p.move())
+        self.image.blit(*gui.p.move())
         return self.showing         
 
     def init_win(self):

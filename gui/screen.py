@@ -51,10 +51,8 @@ class Screen(pygame.sprite.Sprite):
             self.interface = config["interface"]
             
         self.rect    = self.image.get_rect()
-        print self.bg_pos
         self.rect.x += self.bg_pos[0]
         self.rect.y += self.bg_pos[1]
-        print self.rect
  
     def blit_screen(self, window):
         pass
