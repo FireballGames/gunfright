@@ -41,15 +41,10 @@ class Moneybag(pygame.sprite.Sprite):
         self.box = config['rect']
         self.tpf = config['tpf']
         
-        print "Before"
-        print self.box
-        print self.rect
         self.box.x      -= self.rect.width
         self.box.y      -= self.rect.height
         self.box.width  += self.rect.width  * 2
         self.box.height += self.rect.height * 2
-        print "After"
-        print self.box
 
     def move(self):
         if self.ticks < 0:
@@ -132,7 +127,6 @@ def show(game, newlevel):
     level_config = config.screen('shootmoney')
     level_config.update({
         'background': gui.level.background,
-        'pos':        (32, 32),
         'interface':  gui.i
     })
     screen = ShootMoney(**level_config)

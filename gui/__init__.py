@@ -32,6 +32,10 @@ g      = 0
 screen_data = {}
 
 class MainGui(screen.Screen):
+    def __init__(self, **config):
+        screen.Screen.__init__(self, **config)
+        self.image.set_colorkey([255, 0, 255])
+            
     def blit_screen(self, window):
         global g
         

@@ -21,7 +21,7 @@ screens:
     sound:      False
     sleep:      2
   shootmoney:
-    pos:        (32, 32)
+    pos:        [50, 50]
     sound:      False
     sleep:      2
     showing:    True
@@ -32,7 +32,6 @@ levels:
     background: res/town.png
     time:       30000
     score:      1000
-    padding:    64
     bounties:
     - 
         percent: 3

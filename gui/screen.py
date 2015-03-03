@@ -51,6 +51,7 @@ class Screen(pygame.sprite.Sprite):
             self.interface = config["interface"]
             
         self.rect    = self.image.get_rect()
+        print self.bg_pos
         self.rect.x += self.bg_pos[0]
         self.rect.y += self.bg_pos[1]
         print self.rect
@@ -67,9 +68,9 @@ class Screen(pygame.sprite.Sprite):
             sound.play(self.sound)
 
     def show_image(self, window):
+        window.blit(self.image, self.rect)
         if(self.interface):
             self.interface.show_image(window)
-        window.blit(self.image, self.bg_pos)
         self.blit_screen(window)
 
     def show_screen(self, window):
