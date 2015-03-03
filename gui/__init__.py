@@ -32,9 +32,14 @@ g      = 0
 screen_data = {}
 
 class MainGui(screen.Screen):
+    pointer = False
+    
     def __init__(self, **config):
         screen.Screen.__init__(self, **config)
         self.image.set_colorkey([255, 0, 255])
+        
+        global p
+        self.pointer = p
             
     def blit_screen(self, window):
         global g
@@ -45,6 +50,9 @@ class MainGui(screen.Screen):
         window.blit(text.render("Level "+str(g.level.score),     True, (255,0,0)), (500, 475))
         window.blit(text.render("Time  "+str(g.level.seconds()), True, (255,0,0)), (500, 500))
         window.blit(text.render(str(g.player.shots),             True, (255,0,0)), (200, 475))
+        
+        if(self.pointer):
+            window.blit(*self.pointer.move())
 
 def init_win(config):
     global window
