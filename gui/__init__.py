@@ -24,9 +24,8 @@
 
 import pygame, screen
 
-p      = 0
-i      = 0
-g      = 0
+i      = None
+g      = None
 gui    = None
 
 screen_data = {}
@@ -97,8 +96,9 @@ class MainGui(screen.Screen):
         screen.Screen.__init__(self, **config)
         self.image.set_colorkey([255, 0, 255])
         
-        global p
-        self.pointer = p
+        global g
+        import pointer
+        self.pointer = pointer.Pointer(g.player)
             
     def blit_screen(self, window):
         global g
@@ -132,7 +132,6 @@ def init_game(game):
     global p, i, g, screen_data
     import pointer
     g = game
-    p = pointer.Pointer(g.player)
     i = MainGui(**screen_data['gui'])
     
 def win():
