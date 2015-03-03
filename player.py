@@ -28,8 +28,8 @@ class Player():
     shots   = 6
     
     def __init__(self, config):
-        if 'player' in config:
-            self.player.config.update(config['player'])
+        if config.player:
+            self.player.config.update(config.player)
         
     def shoot(self):
         if(self.shots > 0):

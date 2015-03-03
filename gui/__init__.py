@@ -45,7 +45,7 @@ class MainGui(screen.Screen):
         global g
         
         import pygame, config
-        text = pygame.font.Font(None, config.params['text_size'])
+        text = pygame.font.Font(None, config.config()['text_size'])
         window.blit(text.render("Money "+str(g.player.score),    True, (255,0,0)), (500, 450))
         window.blit(text.render("Level "+str(g.level.score),     True, (255,0,0)), (500, 475))
         window.blit(text.render("Time  "+str(g.level.seconds()), True, (255,0,0)), (500, 500))
@@ -55,6 +55,29 @@ class MainGui(screen.Screen):
         if(self.pointer):
             window.blit(*self.pointer.move())
 
+class IsoGame():
+    def __init__(self):
+        screen_size  = (800, 600)
+        flag         = pygame.DOUBLEBUF
+
+        pygame.init()
+        self.surface   = pygame.display.set_mode(screen_size,flag)
+        self.gamestate = True
+        self.loop()
+ 
+    def game_exit(self):
+        """ funkcja przerywa dzialanie gry i wychodzi do systemu"""
+        import sys
+        sys.exit()
+ 
+    def loop(self):
+        """ glowna petla gry """
+        while self.gamestate:
+           for event in pygame.event.get():
+               if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                   self.gamestate = False
+        self.game_exit()
+ 
 def init_win(config):
     global window
     
@@ -65,6 +88,7 @@ def init_win(config):
 
 def init_gui(config):
     global screen_data
+    print config
     screen_data = config['screens']
     
     pygame.init()

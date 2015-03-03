@@ -30,6 +30,7 @@ class Game(object):
     
     def __init__(self, params):
         print "Initialization game"
+        print params
         self.config = params
 
         import player

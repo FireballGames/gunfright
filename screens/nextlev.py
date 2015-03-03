@@ -30,7 +30,7 @@ class NextLev(gui.screen.Screen):
         global g
         
         import pygame, config
-        text = pygame.font.Font(None, config.params['text_size'])
+        text = pygame.font.Font(None, config.config()['text_size'])
         window.blit(text.render("Level "+str(g.player.level), True, (255, 255, 255)), (400, 300))
 
 

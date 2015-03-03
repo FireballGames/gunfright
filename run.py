@@ -27,13 +27,13 @@ def main():
     params = config.load('game.yml')
 
     import gui
-    gui.init_gui(config.params)
+    gui.init_gui(config.config())
     
     import screens.intro
     screens.intro.show(config.screen('intro'))
 
     import game
-    mygame = game.Game(config.params)
+    mygame = game.Game(config.config())
     gui.init_game(mygame)
 
     import mainloop

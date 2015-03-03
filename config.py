@@ -22,34 +22,64 @@
 #  
 #  
 
-import yaml
+class Config():
+    __params = {}
+    
+    def __init__(self, filename = False):
+        self.load(filename)
 
-# __getitem__
-params = {
-}
+    def load(self, filename = False):
+        if filename:
+            import yaml
+            self.__params.update(yaml.load(open(filename, 'r')))
+
+    def __getitem__(self, key):
+        if key in self.__params:
+            return self.__params[key]
+        else:
+            return False
+    
+    def __getattr__(self, key):
+        if key in self.__params:
+            return self.__params[key]
+        else:
+            return False
+    
+    def __str__(self):
+        return str(self.__params)
+    
+__config = Config()
 
 def level(index):
-    global params
-    levels = params['levels']
+    global __config
+    levels = __config.levels
     if index in levels:
         return levels[index]
     else:
         return levels[-1]
+        
+def map():
+    return [
+        [1, 1, 2],
+        [1, 2, 3],
+        [2, 3, 3]
+    ]
+
+def config():
+    global __config
+    return __config
 
 def screen(index):
-    global params
-    return params['screens'][index]
-
+    global __config
+    return __config.screens[index]
+    
 def load(filename):
-    global params;
-    params.update(yaml.load(open(filename, 'r')))
-    print params
-    return params
+    global __config
+    return __config.load(filename)
 
 def main():
-    global params;
-    print  params
-    return params
+    global __config
+    return __config
 
 if __name__ == '__main__':
     main()
