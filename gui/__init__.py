@@ -24,12 +24,71 @@
 
 import pygame, screen
 
-window = 0
 p      = 0
 i      = 0
 g      = 0
+gui    = None
 
 screen_data = {}
+
+class PygameWin():
+    gamestate   = True
+    main_theme  = False
+    
+    def __init__(self, **args):
+        screen_size = [800, 600]
+        flag        = pygame.DOUBLEBUF
+        show_mouse  = False
+        title       = 'New game'
+        icon        = None
+        
+        pygame.init()
+
+
+        # screen_data = config['screens']
+        if 'screen_size' in args:
+            screen_size = args['screen_size']
+        if 'flag' in args:
+            flag = args['flag']
+
+        self.surface = pygame.display.set_mode(screen_size, flag)
+
+        if 'title' in args:
+            title = args['title']
+        if 'icon' in args:
+            icon = pygame.image.load(args['icon']).convert_alpha()       
+        if 'show_mouse' in args:
+            show_mouse = args['show_mouse']
+
+        pygame.display.set_caption(title.encode("utf8"))
+        if icon:
+            pygame.display.set_icon(icon)
+        pygame.mouse.set_visible(show_mouse)
+        
+        if 'main_theme' in args:
+            self.main_theme = args['main_theme']
+        
+        if self.main_theme:
+            import sound
+            sound.init_sound(self.main_theme)
+ 
+    def game_exit(self):
+        """Stop game and exit to system"""
+        import sys
+        sys.exit()
+ 
+    def loop(self):
+        """Game main loop"""
+        while self.gamestate:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                   self.gamestate = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                   self.gamestate = False
+                   
+                print "Game nain loop"
+                
+        self.game_exit()
 
 class MainGui(screen.Screen):
     pointer = False
@@ -55,67 +114,38 @@ class MainGui(screen.Screen):
         if(self.pointer):
             window.blit(*self.pointer.move())
 
-class IsoGame():
-    def __init__(self):
-        screen_size  = (800, 600)
-        flag         = pygame.DOUBLEBUF
-
-        pygame.init()
-        self.surface   = pygame.display.set_mode(screen_size,flag)
-        self.gamestate = True
-        self.loop()
- 
-    def game_exit(self):
-        """ funkcja przerywa dzialanie gry i wychodzi do systemu"""
-        import sys
-        sys.exit()
- 
-    def loop(self):
-        """ glowna petla gry """
-        while self.gamestate:
-           for event in pygame.event.get():
-               if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                   self.gamestate = False
-        self.game_exit()
- 
-def init_win(config):
-    global window
-    
-    window = pygame.display.set_mode(config['size'])
-    pygame.display.set_caption(config['title'].encode("utf8"))
-    icon = pygame.image.load(config['icon']).convert_alpha()       
-    pygame.display.set_icon(icon)
-
 def init_gui(config):
-    global screen_data
-    print config
-    screen_data = config['screens']
-    
-    pygame.init()
-    init_win(config['window'])
-    pygame.mouse.set_visible(False)
+    global screen_data, gui
 
-    import sound
-    sound.init_sound(config['main_theme'])
+    print "INIT GUI"
+    print config
+    screen_data = config.screens
+    
+    gui = PygameWin(
+        screen_size = (800, 600),
+        title       = u'Проверка',
+        icon        = config.window['icon'],
+        main_theme  = config.main_theme
+    )
     
 def init_game(game):
-    global p, i, g
+    global p, i, g, screen_data
     import pointer
     g = game
     p = pointer.Pointer(g.player)
     i = MainGui(**screen_data['gui'])
     
 def win():
-    global window, screen_data
+    global gui, screen_data
     
     s = screen.Screen(**screen_data['win'])
-    s.show_screen(window)
+    s.show_screen(gui.surface)
 
 def loose():
-    global window
+    global gui, screen_data
     
     s = screen.Screen(**screen_data['loose'])
-    s.show_screen(window)
+    s.show_screen(gui.surface)
 
 def main():
     return 0

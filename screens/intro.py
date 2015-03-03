@@ -27,7 +27,7 @@ def show(params):
     
     print "Showing intro"
     screen = gui.screen.Screen(**params)
-    screen.show_screen(gui.window)
+    screen.show_screen(gui.gui.surface)
 
 def main():
     import game

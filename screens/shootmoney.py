@@ -128,7 +128,7 @@ def show(game):
     })
     screen = ShootMoney(**level_config)
     screen.init_win()
-    screen.show_screen(gui.window)
+    screen.show_screen(gui.gui.surface)
 
 def main():
     show()

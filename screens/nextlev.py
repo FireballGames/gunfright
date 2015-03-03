@@ -42,7 +42,7 @@ def show(game):
     print "Showing next level"
     import config
     screen = NextLev(**config.screen('nextlev'))
-    screen.show_screen(gui.window)
+    screen.show_screen(gui.gui.surface)
 
 def main():
     import game
