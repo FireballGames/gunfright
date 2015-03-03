@@ -22,66 +22,19 @@
 #  
 #  
 
-class Level():
-    time        = 3000
-    percent_bag = 2
-    
-    def __init__(self, game, config):
-        import pygame
-        self.time        = config['time']
-        self.percent_bag = config['percent_bag']
-        self.score       = config['score']
-        self.speedrange  = config['speedrange']
-
-        self.game  = game
-        self.timer = pygame.time.Clock()
-
-        self.background  = pygame.image.load(config['background'])
-        self.moneybag    = pygame.image.load("res/money.png")
-        self.moneybag.set_colorkey([255, 0, 255])
-
-    def finish(self):
-        self.time -= self.timer.tick()
-        return self.time <= 0
-        
-    def can_add_bag(self):
-        import random
-        return random.randrange(100) < self.percent_bag
-        
-    def seconds(self):
-        return self.time / 1000
-        
-    def dir(self):
-        import random
-        return [
-            random.randrange(*self.speedrange['x']), 
-            random.randrange(*self.speedrange['y'])
-        ]
-
 def show(game):
     import gui, pygame, time
     
     while not game.lost:
-        game.player.levelup()
-    
-        level = dict(
-            score       = game.player.next_lev,
-            time        = 30000,
-            percent_bag = 5,
-            background  = 'res/town.png',
-            speedrange  = {
-                'x': [-10, 10],
-                'y': [  5, 20],
-            }
-        )
-        
+        game.levelup()
+            
         print game.lost
     
         import screens.nextlev
         screens.nextlev.show(game)
 
-        import screens.shootmoney
-        screens.shootmoney.show(game, Level(game, level))
+        import level, screens.shootmoney
+        screens.shootmoney.show(game, game.level)
 
 def main():
     import game

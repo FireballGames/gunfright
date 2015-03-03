@@ -25,23 +25,47 @@
 import pygame
 
 class Screen(pygame.sprite.Sprite):
-    def __init__(self, config):
+    bg_pos    = [0, 0]
+    sleep     = False
+    sound     = False
+    showing   = False
+    interface = False
+    
+    def __init__(self, **config):
         pygame.sprite.Sprite.__init__(self)
-        self.image     = config["background"]
-        self.sleep     = config["sleep"]
-        self.bg_pos    = config["bg_pos"]
-        self.sound     = config["sound"]
-        self.showing   = config["showing"]
-        self.interface = config["interface"]
-        self.rect      = self.image.get_rect()
-        print config
-
+        if "background" in config:
+            if isinstance(config["background"], pygame.Surface):
+                self.image = config["background"]
+            else:
+                self.image = pygame.image.load(config["background"])
+ 
+        if "sleep" in config:
+            self.sleep     = config["sleep"]
+        if "pos" in config:
+            self.bg_pos    = config["pos"]
+        if "sound" in config:
+            self.sound     = config["sound"]
+        if "showing" in config:
+            self.showing   = config["showing"]
+        if "interface" in config:
+            self.interface = config["interface"]
+            
+        self.rect    = self.image.get_rect()
+        self.rect.x += self.bg_pos[0]
+        self.rect.y += self.bg_pos[1]
+        print self.rect
+ 
     def blit_screen(self, window):
         pass
                 
     def process_event(self, e):
         pass
-                
+        
+    def play_sound(self):
+        if self.sound:
+            import sound
+            sound.play(self.sound)
+
     def show_image(self, window):
         if(self.interface):
             self.interface.show_image(window)
@@ -49,23 +73,37 @@ class Screen(pygame.sprite.Sprite):
         self.blit_screen(window)
 
     def show_screen(self, window):
-        if self.sound:
-            import sound
-            sound.play(self.sound)
+        self.play_sound()
+        
+        for e in pygame.event.get():
+            self.process_event(e)
+
+        self.show_image(window)
+        pygame.display.update()
+
+        if self.sleep:
+            import time
+            time.sleep(self.sleep)
+                        
+class PlayScreen(Screen):
+    showing = False
+    
+    def __init__(self, **config):
+        Screen.__init__(self, **config)
+
+        if "showing" in config:
+            self.showing     = config["showing"]
+
+    def show_screen(self, window):
+        self.play_sound()
         
         while self.showing:
             for e in pygame.event.get():
                 self.process_event(e)
             self.show_image(window)
             pygame.display.flip()
-            pygame.time.delay(10)
-
-        if self.sleep:
-            self.show_image(window)
-            pygame.display.update()
-
-            import time
-            time.sleep(self.sleep)
+            pygame.time.delay(self.sleep)
+            # 10
             
 def main():
     return 0

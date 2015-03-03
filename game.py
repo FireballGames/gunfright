@@ -23,25 +23,35 @@
 #  
 
 class Game():
-    # gui      = 0
     config   = {}
     
     lost     = False
     next_lev = True
     
-    def __init__(self, config):
+    def __init__(self, params):
         print "Initialization game"
-        # self.gui    = gui
-        self.config = config
+        self.config = params
 
         import player
-        self.player  = player.Player(config)
+        self.player  = player.Player(params)
+        
+        import config, level
+        self.level = level.Level(**config.level(self.player.level))
         
     def end_lev(self):
-        if (self.player.score >= self.player.next_lev):
+        if (self.player.score >= self.level.score):
             self.win()
         else:
             self.loose()
+            
+    def levelup(self):
+        import config, level
+        self.player.level += 1
+        level_data = config.level(self.player.level)
+        self.level = level.Level(**level_data)
+
+        if self.level.score < self.player.score:
+            self.level.score += self.player.score
 
     def win(self):
         print 'You win'

@@ -26,14 +26,7 @@ def show(params):
     import gui, pygame
     
     print "Showing intro"
-    screen = gui.screen.Screen({
-        'background': pygame.image.load(params['background']),
-        'bg_pos':     params['bg_pos'],
-        'sound':      params['sound'],
-        'sleep':      params['sleep'],
-        'showing':    params['showing'],
-        'interface':  params['interface']
-    })
+    screen = gui.screen.Screen(**params)
     screen.show_screen(gui.window)
 
 def main():

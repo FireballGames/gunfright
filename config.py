@@ -28,6 +28,18 @@ import yaml
 params = {
 }
 
+def level(index):
+    global params
+    levels = params['levels']
+    if index in levels:
+        return levels[index]
+    else:
+        return levels[-1]
+
+def screen(index):
+    global params
+    return params['screens'][index]
+
 def load(filename):
     global params;
     params.update(yaml.load(open(filename, 'r')))

@@ -40,14 +40,8 @@ def show(game):
     g = game
     
     print "Showing next level"
-    screen = NextLev({
-        'background': pygame.image.load("res/town.png"),
-        'bg_pos':     (0, 0),
-        'sound':      False,
-        'sleep':      2,
-        'showing':    False,
-        'interface':  False
-    })
+    import config
+    screen = NextLev(**config.screen('nextlev'))
     screen.show_screen(gui.window)
 
 def main():

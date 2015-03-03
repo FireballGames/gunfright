@@ -28,18 +28,19 @@ window = 0
 p      = 0
 i      = 0
 g      = 0
-level  = 0
+
+screen_data = {}
 
 class MainGui(screen.Screen):
     def blit_screen(self, window):
-        global g, level
+        global g
         
         import pygame, config
         text = pygame.font.Font(None, config.params['text_size'])
-        window.blit(text.render("Money "+str(g.player.score),  True, (255,0,0)), (500, 450))
-        window.blit(text.render("Level "+str(level.score),     True, (255,0,0)), (500, 475))
-        window.blit(text.render("Time  "+str(level.seconds()), True, (255,0,0)), (500, 500))
-        window.blit(text.render(str(g.player.shots),           True, (255,0,0)), (200, 475))
+        window.blit(text.render("Money "+str(g.player.score),    True, (255,0,0)), (500, 450))
+        window.blit(text.render("Level "+str(g.level.score),     True, (255,0,0)), (500, 475))
+        window.blit(text.render("Time  "+str(g.level.seconds()), True, (255,0,0)), (500, 500))
+        window.blit(text.render(str(g.player.shots),             True, (255,0,0)), (200, 475))
 
 def init_win(config):
     global window
@@ -50,6 +51,9 @@ def init_win(config):
     pygame.display.set_icon(icon)
 
 def init_gui(config):
+    global screen_data
+    screen_data = config['screens']
+    
     pygame.init()
     init_win(config['window'])
     pygame.mouse.set_visible(False)
@@ -62,39 +66,18 @@ def init_game(game):
     import pointer
     g = game
     p = pointer.Pointer(g.player)
-    i = MainGui({
-        'background': pygame.image.load("res/interface.png"),
-        'bg_pos':     (0, 0),
-        'sound':      False,
-        'sleep':      False,
-        'showing':    False,
-        'interface':  False
-    })
+    i = MainGui(**screen_data['gui'])
     
 def win():
-    global window
+    global window, screen_data
     
-    s = screen.Screen({
-        'background': pygame.image.load("res/win.png"),
-        'bg_pos':     (0, 0),
-        'sound':      False,
-        'sleep':      2,
-        'showing':    False,
-        'interface':  False
-    })
+    s = screen.Screen(**screen_data['win'])
     s.show_screen(window)
 
 def loose():
     global window
     
-    s = screen.Screen({
-        'background': pygame.image.load("res/loose.png"),
-        'bg_pos':     (0, 0),
-        'sound':      "loose",
-        'sleep':      2,
-        'showing':    False,
-        'interface':  False
-    })
+    s = screen.Screen(**screen_data['loose'])
     s.show_screen(window)
 
 def main():

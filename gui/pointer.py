@@ -62,7 +62,6 @@ class Pointer(pygame.sprite.Sprite):
                 sound.play_shoot()
                 self.intersect(moneybags, self.player)
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
-            print "Right"
             self.player.reload()
 
 def main():

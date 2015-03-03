@@ -25,43 +25,52 @@
 import pygame, random, gui
 
 class Moneybag(pygame.sprite.Sprite):
-    def __init__(self, level, config):
+    ticks = -1
+    box   = 0
+    
+    def __init__(self, image, bounty, config):
         pygame.sprite.Sprite.__init__(self)
-        self.image  = level.moneybag
-
+        
+        if image:
+            self.image = image
+            self.rect  = self.image.get_rect()
+        self.dir = bounty.dir
+            
         self.timer = pygame.time.Clock()
 
-        self.dir = level.dir()
-
-        self.boxsize = config['boxsize']
-        self.padding = 64
-        self.start   = True
-        self.ticks   = 0
-        self.tpf     = 100
-
-        self.rect   = self.image.get_rect()
+        self.box = config['rect']
+        self.tpf = config['tpf']
+        
+        print "Before"
+        print self.box
+        print self.rect
+        self.box.x      -= self.rect.width
+        self.box.y      -= self.rect.height
+        self.box.width  += self.rect.width  * 2
+        self.box.height += self.rect.height * 2
+        print "After"
+        print self.box
 
     def move(self):
-        if self.start:
-            self.rect.x = random.randrange(self.padding, self.boxsize[0]-self.padding)
-            self.rect.y = 0
-            self.start  = False
+        if self.ticks < 0:
+            self.rect.x = self.box.x + random.randrange(self.box.width)
+            self.rect.y = self.box.y
+            self.ticks  = self.timer.tick()
             return [self.image, self.rect]
            
         self.ticks += self.timer.tick()
         if self.ticks >= self.tpf:
             self.ticks = 0
             self.rect.x += self.dir[0]
-            self.rect.y += self.dir[1]  
+            self.rect.y += self.dir[1]
             
-        if (self.rect.x not in range(self.boxsize[0])) or (self.rect.y not in range(self.boxsize[1])):
+        if not self.box.contains(self.rect):
             del self
             return False
         else:
             return [self.image, self.rect]
 
-class ShootMoney(gui.screen.Screen):
-    
+class ShootMoney(gui.screen.PlayScreen):
     def blit_screen(self, window):
         import gui
         global moneybags
@@ -70,15 +79,16 @@ class ShootMoney(gui.screen.Screen):
             self.showing = False
             return self.showing;
 
-        if gui.level.finish():
+        if gui.g.level.is_finished():
             gui.g.end_lev()
             self.showing = False
             return self.showing;
         
-        if gui.level.can_add_bag():
-            rect = self.image.get_rect()
-            moneybags.add(Moneybag(gui.level, {
-                'boxsize': [rect.width, rect.height]
+        b = gui.g.level.add_bounty() 
+        if b:
+            moneybags.add(Moneybag(self.moneybag, b, {
+                'rect': self.rect.copy(),
+                'tpf':  100
             }))
             
         import pygame, config
@@ -92,7 +102,10 @@ class ShootMoney(gui.screen.Screen):
     def init_win(self):
         import pygame, gui
         global moneybags
-    
+
+        self.moneybag    = pygame.image.load("res/money.png")
+        self.moneybag.set_colorkey([255, 0, 255])
+
         gui.p.active = self
         moneybags = pygame.sprite.Group()
         
@@ -115,14 +128,14 @@ def show(game, newlevel):
     gui.g     = game
 
     print "Showing shooter"
-    screen = ShootMoney({
+    import config
+    level_config = config.screen('shootmoney')
+    level_config.update({
         'background': gui.level.background,
-        'bg_pos':     (32, 32),
-        'sound':      False,
-        'sleep':      False,
-        'showing':    True,
+        'pos':        (32, 32),
         'interface':  gui.i
     })
+    screen = ShootMoney(**level_config)
     screen.init_win()
     screen.show_screen(gui.window)
     gui.p.active = False

@@ -1,7 +1,5 @@
 window:
-  size:
-  - 800
-  - 600
+  size:  [800, 600]
   title: 'Уравнение Кольта'
   icon:  res/icon.png
 text_size:  34
@@ -9,10 +7,37 @@ main_theme: res/sounds/duel.mp3
 screens:
   intro:
     background: res/intro.png
-    bg_pos:     
-    - 0
-    - 0
     sound:      res/sounds/duel.mp3
     sleep:      2
-    showing:    False
-    interface:  False
+  win:
+    background: res/win.png
+    sleep:      2
+  loose:
+    background: res/loose.png
+    sound:      'res/sounds/loose.mp3'
+    sleep:      2
+  nextlev:
+    background: res/town.png
+    sound:      False
+    sleep:      2
+  shootmoney:
+    pos:        (32, 32)
+    sound:      False
+    sleep:      2
+    showing:    True
+  gui:
+    background: res/interface.png
+levels:
+- 
+    background: res/town.png
+    time:       30000
+    score:      1000
+    padding:    64
+    bounties:
+    - 
+        percent: 3
+        image:   res/money.png
+        score:   100
+        speed:
+          x: [-10, 10]
+          y: [  5, 20]
