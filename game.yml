@@ -29,6 +29,7 @@ screens:
     background: res/interface.png
 levels:
 - 
+    type:       bounty
     background: res/town.png
     time:       30000
     score:      1000

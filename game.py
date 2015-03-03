@@ -21,12 +21,12 @@
 #  MA 02110-1301, USA.
 #  
 #  
-
-class Game():
+        
+class Game(object):
     config   = {}
     
+    next_lev = False
     lost     = False
-    next_lev = True
     
     def __init__(self, params):
         print "Initialization game"
@@ -35,23 +35,16 @@ class Game():
         import player
         self.player  = player.Player(params)
         
-        import config, level
-        self.level = level.Level(**config.level(self.player.level))
-        
-    def end_lev(self):
-        if (self.player.score >= self.level.score):
-            self.win()
-        else:
-            self.loose()
-            
     def levelup(self):
         import config, level
         self.player.level += 1
         level_data = config.level(self.player.level)
-        self.level = level.Level(**level_data)
+        
+        print level_data['type']
+        if level_data['type'] == 'bounty':
+            level_data['player'] = self.player
+            self.level = level.ShootBounty(**level_data)
 
-        if self.level.score < self.player.score:
-            self.level.score += self.player.score
 
     def win(self):
         print 'You win'

@@ -75,7 +75,6 @@ class ShootMoney(gui.screen.PlayScreen):
             return self.showing;
 
         if gui.g.level.is_finished():
-            gui.g.end_lev()
             self.showing = False
             return self.showing;
         
@@ -113,25 +112,23 @@ class ShootMoney(gui.screen.PlayScreen):
     
 moneybags = 0
 
-def show(game, newlevel):
+def show(game):
     global moneybags
     
     import gui, pygame
     
-    gui.level = newlevel
-    gui.g     = game
+    gui.g = game
 
     print "Showing shooter"
     import config
     level_config = config.screen('shootmoney')
     level_config.update({
-        'background': gui.level.background,
+        'background': game.level.background,
         'interface':  gui.i
     })
     screen = ShootMoney(**level_config)
     screen.init_win()
     screen.show_screen(gui.window)
-    gui.p.active = False
 
 def main():
     show()

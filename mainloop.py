@@ -23,18 +23,11 @@
 #  
 
 def show(game):
-    import gui, pygame, time
-    
     while not game.lost:
+        import screens.nextlev, screens.shootmoney
         game.levelup()
-            
-        print game.lost
-    
-        import screens.nextlev
         screens.nextlev.show(game)
-
-        import level, screens.shootmoney
-        screens.shootmoney.show(game, game.level)
+        screens.shootmoney.show(game)
 
 def main():
     import game

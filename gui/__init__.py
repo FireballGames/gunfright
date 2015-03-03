@@ -49,6 +49,7 @@ class MainGui(screen.Screen):
         window.blit(text.render("Money "+str(g.player.score),    True, (255,0,0)), (500, 450))
         window.blit(text.render("Level "+str(g.level.score),     True, (255,0,0)), (500, 475))
         window.blit(text.render("Time  "+str(g.level.seconds()), True, (255,0,0)), (500, 500))
+        pygame.draw.circle(window, (255, 255, 255), (226, 487), 65)
         window.blit(text.render(str(g.player.shots),             True, (255,0,0)), (200, 475))
         
         if(self.pointer):

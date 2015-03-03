@@ -40,21 +40,34 @@ class Bounty():
             ]
 
 class Level():
+    background = False
+    
+    def __init__(self, **config):
+        if 'background' in config:
+            self.background = config['background']
+    
+    def is_finished(self):
+        return False
+        
+    def is_success(self, **args):
+        return False
+
+class ShootBounty(Level):
     time        = 30000
     score       = 1000
-    background  = False
-    weights     = 0
     bounties    = []
     
     def __init__(self, **config):
+        Level.__init__(self, **config)
         if 'time' in config:
             self.time       = config['time']
         if 'score' in config:
             self.score      = config['score']
-        if 'background' in config:
-            self.background = config['background']
         if 'bounties' in config:
             self.bounties   = config['bounties']
+        if 'player' in config:
+            if self.score < config['player'].score:
+                self.score += config['player'].score
         
         import pygame
         self.timer = pygame.time.Clock()
@@ -62,6 +75,9 @@ class Level():
     def is_finished(self):
         self.time -= self.timer.tick()
         return self.time <= 0
+        
+    def is_success(self, **args):
+        return (args['player'].score >= self.score)
 
     def seconds(self):
         return self.time / 1000
@@ -73,6 +89,7 @@ class Level():
             if p < bounty['percent']:
                 return Bounty(**bounty)
         return False
+    
 
 def main():
     return 0
