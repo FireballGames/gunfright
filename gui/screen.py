@@ -54,13 +54,8 @@ class Screen(pygame.sprite.Sprite):
         self.rect.x += self.bg_pos[0]
         self.rect.y += self.bg_pos[1]
         
-        import gui
-        print gui.p
-        if gui.p:
-            if self.interface:
-                gui.p.active = True
-            else:
-                gui.p.active = False
+        if self.interface:
+            self.interface.pointer.active = True
  
     def blit_screen(self, window):
         pass

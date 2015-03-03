@@ -99,7 +99,7 @@ class ShootMoney(gui.screen.PlayScreen):
         self.moneybag    = pygame.image.load("res/money.png")
         self.moneybag.set_colorkey([255, 0, 255])
 
-        gui.p.active = self
+        self.interface.pointer.active = self
         moneybags = pygame.sprite.Group()
         
     def process_event(self, e):
@@ -108,7 +108,7 @@ class ShootMoney(gui.screen.PlayScreen):
             self.showing = False
             gui.g.stop()
         
-        gui.p.process_event(e, moneybags)
+        self.interface.pointer.process_event(e, moneybags)
     
 moneybags = 0
 
