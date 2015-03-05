@@ -22,44 +22,27 @@
 #  
 #  
         
-class Game(object):
-    config   = {}
+class Game():    
+    lost = False
+    win  = False
     
-    next_lev = False
-    lost     = False
-    
-    def __init__(self, params):
-        print "Initialization game"
-        print params
-        self.config = params
+    def __init__(self, config = False):
+        self.config = config
 
         import player
-        self.player  = player.Player(params)
+        self.player  = player.Player(config)
         
     def levelup(self):
-        import config, level
-        self.player.level += 1
-        level_data = config.level(self.player.level)
-        
-        print level_data['type']
-        if level_data['type'] == 'bounty':
-            level_data['player'] = self.player
-            self.level = level.ShootBounty(**level_data)
-
+        import level
+        self.player.levelup()
 
     def win(self):
         print 'You win'
-        self.next_lev = True
-        
-        import gui
-        gui.win()
+        self.win = True
     
     def loose(self):
         print 'You loose'
         self.lost = True
-        
-        import gui
-        gui.loose()
         
     def stop(self):
         print 'Player stop'

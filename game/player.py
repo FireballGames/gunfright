@@ -30,6 +30,9 @@ class Player():
     def __init__(self, config):
         if config.player:
             self.player.config.update(config.player)
+
+    def levelup(self):
+        self.level += 1
         
     def shoot(self):
         if(self.shots > 0):
