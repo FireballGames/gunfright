@@ -22,129 +22,112 @@
 #  
 #  
 
-import pygame, screen
+import pygame
 
-i      = None
-g      = None
-gui    = None
-
-screen_data = {}
+class FpsCounter():
+    t       = 0
+    t_start = 0
+    fps     = 0
+    frames  = 0
+    
+    def get_fps(self):
+        self.t       = pygame.time.get_ticks()
+        self.frames += 1
+        
+        dt = (self.t - self.t_start)
+        if dt > 1000:
+            self.fps     = self.frames * 1000 / dt
+            self.t_start = self.t
+            self.frames  = 0
+            
+        return self.fps
 
 class PygameWin():
     gamestate   = True
     main_theme  = False
+    screen_size = [800, 600]
+    screens     = []
+    fonts       = []
+    screen      = None
     
     def __init__(self, **args):
-        screen_size = [800, 600]
+        pygame.init()
+        self.fps = FpsCounter()
+
+        # screen_data = config['screens']
+
+        self.init_window(**args)
+        
+        if 'main_theme' in args: self.main_theme = args['main_theme']
+        
+        if self.main_theme:
+            import sound
+            sound.init_sound(self.main_theme)
+
+    def init_window(self, **args):
+        """Init SDL window"""
         flag        = pygame.DOUBLEBUF
         show_mouse  = False
         title       = 'New game'
         icon        = None
         
-        pygame.init()
-
-
-        # screen_data = config['screens']
-        if 'screen_size' in args:
-            screen_size = args['screen_size']
-        if 'flag' in args:
-            flag = args['flag']
-
-        self.surface = pygame.display.set_mode(screen_size, flag)
-
-        if 'title' in args:
-            title = args['title']
-        if 'icon' in args:
-            icon = pygame.image.load(args['icon']).convert_alpha()       
-        if 'show_mouse' in args:
-            show_mouse = args['show_mouse']
-
+        if 'size'       in args: self.screen_size = args['size']
+        if 'flag'       in args: flag             = args['flag']
+        if 'title'      in args: title            = args['title']
+        if 'icon'       in args: icon             = args['icon']
+        if 'show_mouse' in args: show_mouse       = args['show_mouse']
+        
+        self.surface = pygame.display.set_mode(self.screen_size, flag)
+        
         pygame.display.set_caption(title.encode("utf8"))
+
         if icon:
-            pygame.display.set_icon(icon)
+            icon_image = pygame.image.load(icon).convert_alpha()       
+            pygame.display.set_icon(icon_image)
+
         pygame.mouse.set_visible(show_mouse)
         
-        if 'main_theme' in args:
-            self.main_theme = args['main_theme']
+    def clear_window(self):
+        pygame.display.flip()
         
-        if self.main_theme:
-            import sound
-            sound.init_sound(self.main_theme)
- 
     def game_exit(self):
         """Stop game and exit to system"""
         import sys
         sys.exit()
- 
-    def loop(self):
-        """Game main loop"""
-        while self.gamestate:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                   self.gamestate = False
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                   self.gamestate = False
-                   
-                print "Game nain loop"
-                
-        self.game_exit()
-
-class MainGui(screen.Screen):
-    pointer = False
-    
-    def __init__(self, **config):
-        screen.Screen.__init__(self, **config)
-        self.image.set_colorkey([255, 0, 255])
         
-        global g
-        import pointer
-        self.pointer = pointer.Pointer(g.player)
+    def process_events(self):
+        import gui.screen
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.gamestate = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.gamestate = False
+               
+            if isinstance(self.screen, gui.screen.Screen): 
+                if event.type == self.screen.scene.LIFETIME:
+                    self.screen.scene.gamestate = False
+        
+    def draw(self, *args):
+        if not (self.screen is None): self.screen.draw()
+        
+        if len(self.fonts) > 0:
+            output_data = "FPS %s"%(self.fps.get_fps())
+            self.fonts[0].draw(output_data, -self.screen_size[0]/2,  -self.screen_size[1]/2, color=(1,1,1)) 
+            # scale=0.2,
             
-    def blit_screen(self, window):
-        global g
+        for e in args:
+            e.draw()
         
-        import pygame, config
-        text = pygame.font.Font(None, config.config()['text_size'])
-        window.blit(text.render("Money "+str(g.player.score),    True, (255,0,0)), (500, 450))
-        window.blit(text.render("Level "+str(g.level.score),     True, (255,0,0)), (500, 475))
-        window.blit(text.render("Time  "+str(g.level.seconds()), True, (255,0,0)), (500, 500))
-        pygame.draw.circle(window, (255, 255, 255), (226, 487), 65)
-        window.blit(text.render(str(g.player.shots),             True, (255,0,0)), (200, 475))
-        
-        if(self.pointer):
-            window.blit(*self.pointer.move())
-
-def init_gui(config):
-    global screen_data, gui
-
-    print "INIT GUI"
-    print config
-    screen_data = config.screens
-    
-    gui = PygameWin(
-        screen_size = (800, 600),
-        title       = u'Проверка',
-        icon        = config.window['icon'],
-        main_theme  = config.main_theme
-    )
-    
-def init_game(game):
-    global p, i, g, screen_data
-    import pointer
-    g = game
-    i = MainGui(**screen_data['gui'])
-    
-def win():
-    global gui, screen_data
-    
-    s = screen.Screen(**screen_data['win'])
-    s.show_screen(gui.surface)
-
-def loose():
-    global gui, screen_data
-    
-    s = screen.Screen(**screen_data['loose'])
-    s.show_screen(gui.surface)
+    def repaint(self, *args):
+        """Game main loop"""
+        self.process_events()
+        self.draw(*args)
+        pygame.display.flip()
+            
+    def release_screens(self, screen):
+        self.screens = [screen]
+        self.screen  = screen
 
 def main():
     return 0

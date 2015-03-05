@@ -22,17 +22,15 @@
 #  
 #  
 
-def show(params):
-    import gui, pygame
-    
-    print "Showing intro"
-    screen = gui.screen.Screen(**params)
-    screen.show_screen(gui.gui.surface)
+from d2lib.config import *
+import gui.scene
+
+class Intro(gui.scene.SceneConfig):
+    def __init__(self):
+        scene_config = Config().intro_screen()
+        gui.scene.SceneConfig.__init__(self, **scene_config)
 
 def main():
-    import game
-    game = Game({})
-    show(game)
     return 0
 
 if __name__ == '__main__':

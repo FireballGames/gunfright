@@ -65,27 +65,27 @@ class Moneybag(pygame.sprite.Sprite):
         else:
             return [self.image, self.rect]
 
-class ShootMoney(gui.screen.PlayScreen):
+class Old_ShootMoney(gui.screen.PlayScreen):
     def blit_screen(self, window):
-        import gui
+        import game.sdlgui
         global moneybags
         
-        if gui.g.lost:
+        if game.sdlgui.g.lost:
             self.showing = False
             return self.showing;
 
-        if gui.g.level.is_finished():
+        if game.sdlgui.g.level.is_finished():
             self.showing = False
             return self.showing;
         
-        b = gui.g.level.add_bounty() 
+        b = game.sdlgui.g.level.add_bounty() 
         if b:
             moneybags.add(Moneybag(self.moneybag, b, {
                 'rect': self.rect.copy(),
                 'tpf':  100
             }))
             
-        import pygame, config
+        import pygame, d2lib.config
         for moneybag in moneybags:
             img = moneybag.move()
             if img:
@@ -103,32 +103,32 @@ class ShootMoney(gui.screen.PlayScreen):
         moneybags = pygame.sprite.Group()
         
     def process_event(self, e):
-        import gui
+        import game.sdlgui
         if e.type == pygame.QUIT:
             self.showing = False
-            gui.g.stop()
+            game.sdlgui.g.stop()
         
         self.interface.pointer.process_event(e, moneybags)
     
 moneybags = 0
 
-def show(game):
+def show(ngame):
     global moneybags
     
-    import gui, pygame
+    import game.sdlgui, pygame
     
-    gui.g = game
+    game.sdlgui.g = ngame
 
     print "Showing shooter"
-    import config
-    level_config = config.screen('shootmoney')
+    import d2lib.config
+    level_config = d2lib.config.screen('shootmoney')
     level_config.update({
-        'background': game.level.background,
-        'interface':  gui.i
+        'background': ngame.level.background,
+        'interface':  game.sdlgui.i
     })
     screen = ShootMoney(**level_config)
     screen.init_win()
-    screen.show_screen(gui.gui.surface)
+    screen.show_screen(game.sdlgui.mygui.surface)
 
 def main():
     show()

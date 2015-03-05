@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  nextlev.py
+#  text.py
 #  
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
 #  
@@ -22,29 +22,18 @@
 #  
 #  
 
-from d2lib.config import *
-import gui.scene, gui.text
-
-class NextLev(gui.scene.SceneConfig):
-    def __init__(self, game):
-        scene_config = Config().screen('nextlev')
-        gui.scene.SceneConfig.__init__(self, **scene_config)
-        self.game = game
+class Text():
+    def __init__(self, font, color):
+        self.font  = font
+        self.color = color
+        self.text  = ''
         
-    def init_controls(self, screen):
-        font      = screen.create_font( None, 32, True)
-        self.text = gui.text.Text(font, (1.0, 1.0, 1.0))
-
-        self.controls.append(self.text)
-    
-    def get_level(self):
-        return self.game.player.level
+    def set_text(self, text):
+        self.text = text
         
     def draw(self):
-        self.text.set_text("LEVEL %s"%(self.get_level()))
+        self.font.draw(self.text, 0, 0, color=self.color)
 
-        gui.scene.SceneConfig.draw(self)
-        
 def main():
     return 0
 

@@ -24,43 +24,58 @@
 
 import pygame
 
-class Screen(pygame.sprite.Sprite):
-    bg_pos    = [0, 0]
-    sleep     = False
-    sound     = False
-    showing   = False
-    interface = False
+class Screen():
     
-    def __init__(self, **config):
-        pygame.sprite.Sprite.__init__(self)
-        if "background" in config:
-            if isinstance(config["background"], pygame.Surface):
-                self.image = config["background"]
-            else:
-                self.image = pygame.image.load(config["background"])
- 
-        if "sleep" in config:
-            self.sleep     = config["sleep"]
-        if "pos" in config:
-            self.bg_pos    = config["pos"]
-        if "sound" in config:
-            self.sound     = config["sound"]
-        if "showing" in config:
-            self.showing   = config["showing"]
-        if "interface" in config:
-            self.interface = config["interface"]
-            
-        self.rect    = self.image.get_rect()
-        self.rect.x += self.bg_pos[0]
-        self.rect.y += self.bg_pos[1]
+    def __init__(self, scene):
+        self.scene        = scene
+        self.scene.screen = self
         
-        if self.interface:
-            self.interface.pointer.active = True
- 
+        self.config = scene.config
+
+        # Default values
+        self.background = None
+        self.mouse      = None
+        self.sound      = False
+        self.color      = (0.0, 0.0, 0.0, 1.0)
+        
+        self.fonts    = []
+
+        # Load from config
+        if "sound" in self.config: self.sound = self.config["sound"]
+        if 'color' in self.config: self.color = self.config['color']
+        
+        if ("background" in self.config) and self.config['background']:
+            if isinstance(self.config["background"], pygame.Surface):
+                self.background = self.config["background"]
+            else:
+                self.background = pygame.image.load(self.config["background"])
+
+        if ("mouse" in self.config) and self.config['mouse']:
+            if isinstance(self.config["mouse"], pygame.Surface):
+                self.mouse = self.config["mouse"]
+            else:
+                self.mouse = pygame.image.load(self.config["mouse"])
+
+
+        if not (self.background is None):
+            self.rect = self.background.get_rect()
+        else:
+            self.rect = pygame.Rect(0, 0, 0, 0)
+
+        bg_pos = self.scene.get_bg_pos()
+        self.rect.x += bg_pos[0]
+        self.rect.y += bg_pos[1]
+        
+        self.scene.init_controls(self)
+         
     def blit_screen(self, window):
         pass
-                
-    def process_event(self, e):
+    
+    def process_events(self):        
+        keys = pygame.key.get_pressed()
+        # Movement keys
+        # if keys[pygame.K_SPACE]:
+            # self.gamestate = False
         pass
         
     def play_sound(self):
