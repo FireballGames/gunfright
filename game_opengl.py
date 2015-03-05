@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  run.py
+#  opengl.py
 #  
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
 #  
@@ -22,17 +22,23 @@
 #  
 #  
 
+import gunfright, gunfright.view
 from d2lib.config import Config
 
-import game_opengl
-import game_sdl
-
-def main():
-    c = Config('game.yml')
-
-    game_opengl.main(c)
+def main(config = None):
+    if config is None: config = Config()
     
+    v = gunfright.view.View(config)
+    g = gunfright.Gunfright(config)
+    
+    print 'Starting game'
+    while v.is_running(g):
+        g.levelup()
+        v.run(g)
     return 0
 
 if __name__ == '__main__':
-    main()
+    config = Config('game.yml')
+    config.set_opengl(True)
+    main(config)
+

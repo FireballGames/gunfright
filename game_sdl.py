@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  run.py
+#  opengl.py
 #  
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
 #  
@@ -22,17 +22,20 @@
 #  
 #  
 
+import gunfright, game.sdlgui, game.mainloop
+
 from d2lib.config import Config
 
-import game_opengl
-import game_sdl
-
-def main():
-    c = Config('game.yml')
-
-    game_opengl.main(c)
+def main(config = None):
+    if config is None: config = Config()
+    config.set_opengl(False)
+    
+    g = gunfright.Gunfright(config)
+    game.sdlgui.run_game(g, config)
+    # game.mainloop.show(g)
     
     return 0
 
 if __name__ == '__main__':
-    main()
+    config = Config('game.yml')
+    main(config)
