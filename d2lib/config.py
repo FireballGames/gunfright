@@ -48,16 +48,26 @@ class Config():
     def __str__(self):
         return str(self.__params)
     
+    def set_opengl(self, opengl):
+        self.__params['opengl'] = opengl
+        
+    def level(self, index):
+        if index in self.levels:
+            return self.levels[index]
+        else:
+            return self.levels[-1]
+
+    def screen(self, index):
+        if index in self.screens:
+            return self.screens[index]
+        else:
+            return False
+            
+    def intro_screen(self):
+        return self.screen('intro')
+    
 __config = Config()
 
-def level(index):
-    global __config
-    levels = __config.levels
-    if index in levels:
-        return levels[index]
-    else:
-        return levels[-1]
-        
 def map():
     return [
         [1, 1, 2],
@@ -69,9 +79,13 @@ def config():
     global __config
     return __config
 
+def level(index):
+    global __config
+    levels = __config.level(index)
+        
 def screen(index):
     global __config
-    return __config.screens[index]
+    return __config.screen(index)
     
 def load(filename):
     global __config
