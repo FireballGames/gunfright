@@ -71,7 +71,17 @@ class Screen():
     def blit_screen(self, window):
         pass
     
-    def process_events(self):        
+    def process_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.gamestate = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.gamestate = False
+            if event.type == self.scene.LIFETIME:
+                self.scene.gamestate = False
+                    
+            self.scene.process_event(event)
+        
         keys = pygame.key.get_pressed()
         # Movement keys
         # if keys[pygame.K_SPACE]:

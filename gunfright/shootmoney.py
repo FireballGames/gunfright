@@ -22,45 +22,80 @@
 #  
 #  
 
-import gui.scene, gui.opengl, gui.opengl.tile
+import gui.scene, gui.opengl, gui.opengl.tile, pygame.time
 
+class Bounties():
+    def __init__(self, textures):
+        self.textures = textures
+        self.bounties = []
+        
+        self.timer   = pygame.time.Clock()
+        self.ticks   = -1
+        self.tpf     = 50
+        
+    def add_bounty(self, b):
+        if b:
+            m = Moneybag(self.textures[0])
+            self.bounties.append(m)
+            # Moneybag(self.moneybag, b, {
+            #     'rect': self.rect.copy(),
+            #     'tpf':  100
+            # })
+            return m
+        return None
+
+        
+    def draw(self):
+        for b in self.bounties: b.draw()
+        self.ticks += self.timer.tick()
+        if self.ticks >= self.tpf:
+            self.ticks = 0
+            for b in self.bounties: b.move()
+            self.bounties = [b for b in self.bounties if b.pos[1] > 0]
+        
+    def shoot(self, player, mouse):
+        rpos = (
+            mouse.pos[0] - mouse.texture.pos[0],
+            mouse.pos[1] - mouse.texture.pos[1],
+            mouse.pos[2] - mouse.texture.pos[2],
+        )
+        print rpos
+        for b in self.bounties:
+            print [b.pos]
+            if (b.pos[0] in range(rpos[0]-100, rpos[0]+100)) and \
+                (b.pos[1] in range(rpos[1]-100, rpos[1]+100)):
+                    b.pos[1] = 400
+                    player.score += 100
+        pass
+        
 class Moneybag(gui.opengl.tile.Tile):
     def __init__(self, texture):
         gui.opengl.tile.Tile.__init__(self, texture)
-
+        
         import random
         
         self.pos = [
             random.randrange(-400, 400),
-            -300,
-            random.randrange(-300, 300)
+            300,
+            -250, # random.randrange( 150, 450)
         ]
         self.dir = (
             random.randrange(-10, 10),
             random.randrange( 10, 20),
-            random.randrange(-10, 10)
+            0 # random.randrange(-10, 10)
         )
         
     def move(self):
-        # if self.ticks < 0:
-        #    self.rect.x = self.box.x + random.randrange(self.box.width)
-        #    self.rect.y = self.box.y
-        #    self.ticks  = self.timer.tick()
-        #    return [self.image, self.rect]
-           
-        # self.ticks += self.timer.tick()
-        # if self.ticks >= self.tpf:
-        #    self.ticks = 0
-        #    self.rect.x += self.dir[0]
-        #    self.rect.y += self.dir[1]
-         
         self.pos[0] += self.dir[0]
         self.pos[1] += self.dir[1]
-        self.pos[2] += self.dir[2]
+        self.pos[2] += self.dir[2]            
             
-        # print "Y"+str(self.pos[1])
-        if self.pos[1] >= 300:
+        if self.pos[1] < 0:
             del self
+            return False
+            
+        return True
+
 
 class ShootMoney(gui.scene.SceneConfig):
     def __init__(self, game, **config):
@@ -71,49 +106,42 @@ class ShootMoney(gui.scene.SceneConfig):
         
     def init_controls(self, screen):
         self.moneybag  = screen.create_texture("res/money.png")
-        self.moneybags = []
+
+        self.bounties = Bounties([self.moneybag])
+        self.controls.append(self.bounties)           
         
         font      = screen.create_font( None, 32, True)
-        self.text = gui.text.Text(font, (1.0, 1.0, 1.0))
-
-        self.controls.append(self.text)   
+        self.shots_text     = gui.text.Text(font, (1.0, 1.0, 1.0))
+        self.shots_text.pos = (-300, 100)
+        screen.gui.append(self.shots_text)   
+        self.score_text = gui.text.Text(font, (1.0, 1.0, 1.0))
+        self.score_text.pos = (100, 100)
+        screen.gui.append(self.score_text)   
 
     def draw(self):
-        b = self.add_bounty()
+        b = self.bounties.add_bounty(self.game.level.add_bounty())
         # self.screen.tiles.append(b)
             
-        for m in self.moneybags:
-            m.move()
-            if m.pos[1] > 300: del m
-                
-        self.text.set_text("SHOTS %s"%(self.get_shots()))
+        self.shots_text.set_text("SHOTS %s"%(self.get_shots()))
+        self.score_text.set_text("SCORE %s"%(self.game.player.score))
 
         gui.scene.SceneConfig.draw(self)
         
+    def process_event(self, event):
+        gui.scene.SceneConfig.process_event(self, event)
+        
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            print "click"
+            #if self.in_active() and self.player.shoot():
+            if self.game.player.shoot():
+                # sound.play_shoot()
+                self.bounties.shoot(self.game.player, self.screen.mouse_tile)
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+            print "reload"
+            self.game.player.reload()
+        
     def get_shots(self):
         return self.game.player.shots
-
-    def add_bounty(self):
-        b = self.game.level.add_bounty() 
-        if b:
-            m = Moneybag(self.moneybag)
-            self.moneybags.append(m)
-            # Moneybag(self.moneybag, b, {
-            #     'rect': self.rect.copy(),
-            #     'tpf':  100
-            # })
-            self.controls.append(m)
-            return m
-        return None
-        
-    def d2_blit_screen(self, window):
-        if game.lost:                return False;
-        if game.level.is_finished(): return False;
-        return self.showing
-        
-        txt = gui.text.Text(self.gui.fonts[0], (1.0, 1.0, 1.0))
-        txt.set_text("SHOTS %s"%(g.player.shots))
-
 
 def main():
     return 0

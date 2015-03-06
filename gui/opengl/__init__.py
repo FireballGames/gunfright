@@ -78,6 +78,7 @@ class OpenGLWin(gui.PygameWin):
         import gui.opengl.screen
         
         s = gui.opengl.screen.Screen(scene)
+        s.gamestate = self.gamestate
         self.screens.append(s)
         
         if self.screen is None: self.screen = s
@@ -99,6 +100,7 @@ class OpenGLWin(gui.PygameWin):
             self.repaint(*args)
 
             if not(self.screen is None):
+                self.gamestate = self.screen.gamestate
                 if not self.screen.scene.gamestate: return
 
             if not self.gamestate: return

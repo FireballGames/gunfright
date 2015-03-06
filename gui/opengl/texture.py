@@ -26,8 +26,11 @@ from OpenGL.GL import *
 import pygame
 
 class Texture():
-    def __init__(self, src, image=None, pos=None):
-        if image == None: image = pygame.image.load(src)
+    def __init__(self, src, pos=None):
+        if isinstance(src, pygame.Surface):
+            image = src
+        else:
+            image = pygame.image.load(src)
         
         # Resize texture from surface
         self.rect = image.get_rect()

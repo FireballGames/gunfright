@@ -60,6 +60,9 @@ class SceneConfig():
     def init_controls(self, screen):
         pass
         
+    def process_event(self, event):
+        pass
+        
     def draw(self):
         for c in self.controls:
             c.draw()

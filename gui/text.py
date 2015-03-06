@@ -27,12 +27,13 @@ class Text():
         self.font  = font
         self.color = color
         self.text  = ''
+        self.pos   = [0, 0]
         
     def set_text(self, text):
         self.text = text
         
     def draw(self):
-        self.font.draw(self.text, 0, 0, color=self.color)
+        self.font.draw(self.text, self.pos[0], self.pos[1], color=self.color)
 
 def main():
     return 0

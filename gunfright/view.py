@@ -61,6 +61,7 @@ class View():
         self.gui.show()
         
         c = self.config.screens['shootmoney'].copy()
+        c.update({'depth': [800, 600, 500], 'pos': [0, 300, -300]})
         # c.update({
         #     'view_box': (
         #         -400, 400,

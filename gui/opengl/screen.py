@@ -39,12 +39,9 @@ class Screen(gui.screen.Screen):
         if not(self.background is None):
             bg_tile     = self.create_tile(self.create_texture(self.background))
             bg_tile.pos = self.scene.get_bg_pos()
-            print bg_tile.pos
             
         if not(self.mouse is None):
             self.set_mouse(self.mouse)
-        
-        print self.scene.get_viewbox()
 
         # glMatrixMode(GL_MODELVIEW)
         # glLoadIdentity()
@@ -58,16 +55,19 @@ class Screen(gui.screen.Screen):
         
     def draw(self):
         self.clear_window()
+                    
         self.process_events()
         
         for t in self.tiles:
             t.draw()
         
+        self.scene.draw()
+
         for g in self.gui:
             g.draw()
+
+        if not(self.mouse_tile is None): self.mouse_tile.draw()
            
-        self.scene.draw()
-            
     # Working with tile
     def create_tile(self, src):
         import texture,tile
@@ -85,10 +85,7 @@ class Screen(gui.screen.Screen):
     def create_texture(self, src):
         import pygame, texture
         
-        if isinstance(src, pygame.Surface):
-            t = texture.Texture('', src)
-        else:
-            t = texture.Texture(src)
+        t = texture.Texture(src)
         
         self.textures.append(t) 
         return t
@@ -101,6 +98,8 @@ class Screen(gui.screen.Screen):
         
     def create_gui(self, src):
         import texture, tile
+        
+        print src
         
         if isinstance(src, texture.Texture):
             t = tile.Tile(src)
@@ -116,10 +115,9 @@ class Screen(gui.screen.Screen):
         
         import tile, texture
         
-        tex = self.create_texture(mouse)
-        self.mouse_tile = self.create_gui(tex)
-        tex.pos[0] = (800 + tex.w)/2
-        tex.pos[1] = (600 + tex.h)/2
+        self.mouse_tile = self.create_gui(mouse)
+        self.mouse_tile.texture.pos[0] = (800 + self.mouse_tile.texture.w)/2
+        self.mouse_tile.texture.pos[1] = (600 + self.mouse_tile.texture.h)/2
         self.mouse_tile.pos = self.scene.pos
         
     def process_events(self):

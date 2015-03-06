@@ -34,7 +34,7 @@ class Font():
         font = pygame.font.SysFont(family, size, bold=bold)
         for i in range(ord(' '), ord('~')):
             game_char = font.render(chr(i), 1, (255,255,255))
-            txt = gui.opengl.texture.Texture('', game_char)
+            txt = gui.opengl.texture.Texture(game_char)
             self.render.append(txt)
         return
       

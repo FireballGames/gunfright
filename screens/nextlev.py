@@ -35,7 +35,7 @@ class NextLev(gui.scene.SceneConfig):
         font      = screen.create_font( None, 32, True)
         self.text = gui.text.Text(font, (1.0, 1.0, 1.0))
 
-        self.controls.append(self.text)
+        self.screen.gui.append(self.text)
     
     def get_level(self):
         return self.game.player.level

@@ -95,19 +95,6 @@ class PygameWin():
         import sys
         sys.exit()
         
-    def process_events(self):
-        import gui.screen
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.gamestate = False
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self.gamestate = False
-               
-            if isinstance(self.screen, gui.screen.Screen): 
-                if event.type == self.screen.scene.LIFETIME:
-                    self.screen.scene.gamestate = False
-        
     def draw(self, *args):
         if not (self.screen is None): self.screen.draw()
         
@@ -121,7 +108,6 @@ class PygameWin():
         
     def repaint(self, *args):
         """Game main loop"""
-        self.process_events()
         self.draw(*args)
         pygame.display.flip()
             
