@@ -24,14 +24,49 @@
 
 import game
 
+class MyPlayer(game.Player):
+    def __init__(self):
+        game.Player.__init__(self)
+        
+        import sdl_sprite
+        
+        self.images     = sdl_sprite.SDLSprite('res/quickdraw.png', (21, 35))
+        self.images.pos = [50, 30] 
+
+        self.speed = 1.2
+
 class MyGame(game.Game):
     def __init__(self):
         game.Game.__init__(self)
         
+        import sdl_sprite
+        
+        self.d2image1     = sdl_sprite.SDLSprite('res/money.png')
+        self.d2image1.pos = ( 10, 20)
+        self.d2image2     = sdl_sprite.SDLSprite('res/money.png')
+        self.d2image2.pos = (220, 20)
+        self.player       = MyPlayer()
+        
+        self.player.collisions = [self.d2image2]
+        
+    def process_events(self):
+        game.Game.process_events(self)
+        
         import pygame
         
-        image = pygame.image.load('res/money.png')
-        self.window.add_image(image, (10, 20))
+        keys = pygame.key.get_pressed()
+        if   keys[pygame.K_UP]:    self.player.move(  0, -1)
+        elif keys[pygame.K_DOWN]:  self.player.move(  0,  1)
+        elif keys[pygame.K_LEFT]:  self.player.move( -1,  0)
+        elif keys[pygame.K_RIGHT]: self.player.move(  1,  0)
+        
+    def draw_bg(self):
+        game.Game.draw_bg(self)
+        self.window.draw_image(self.d2image1)        
+
+    def draw_fg(self):
+        game.Game.draw_fg(self)
+        self.window.draw_image(self.d2image2)        
 
 def main():
     game = MyGame()

@@ -24,6 +24,32 @@
 
 import pygame, sdl_window
 
+class Player():
+    def __init__(self):
+        self.images  = None
+        self.speed   = 1
+        
+        self.collisions = []
+        
+    def move(self, *coords):
+        """Move player by coords"""
+        self.images.animate = True
+        newpos = [
+            self.images.pos[0],
+            self.images.pos[1]
+        ]
+        for i in range(len(coords)):
+            newpos[i] += coords[i]*self.speed
+        for c in self.collisions:
+            if c.collision(newpos, self.images): return
+        self.images.pos = newpos
+                    
+    def draw(self):
+        # print self.images.animate
+        image = self.images.draw()
+        self.images.animate = False
+        return image
+
 class Game():
     def __init__(self):
         self.screen = {
@@ -32,6 +58,7 @@ class Game():
         }
         self.window    = sdl_window.SDLwindow(self.screen)
         self.gamestate = 1
+        self.player    = None
     
     def stop(self):
         """Exit from game"""
@@ -45,11 +72,24 @@ class Game():
             if event.type == pygame.QUIT: self.stop()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: self.stop()        
     
+    def draw_bg(self):
+        self.window.clear()
+        
+    def draw_fg(self):
+        pass
+        
+    def draw(self):
+        """Game window drawing"""
+        self.draw_bg()
+        self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
+        self.draw_fg()
+        self.window.draw()
+    
     def play(self):
         """Game main loop"""
         while self.gamestate:
             self.process_events()
-            self.window.draw()
+            self.draw()
 
 def main():
     game = Game()

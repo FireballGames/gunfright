@@ -29,10 +29,20 @@ class SDLwindow():
         pygame.init()
         self.surface = pygame.display.set_mode(screen['size'], screen['flags'])
         
-    def add_image(self, image, pos=(0,0)):
+    def draw_image(self, image):
+        """Draw image in pos"""
+        self.surface.blit(image.draw(), image.pos)
+    
+    def draw_image_pos(self, image, pos=(0,0)):
+        """Draw image in pos"""
         self.surface.blit(image, pos)
+    
+    def clear(self):
+        """Clear screen"""
+        self.surface.fill((0,0,0))
         
     def draw(self):
+        """Draw screen"""
         pygame.display.flip()
 
 def main():
