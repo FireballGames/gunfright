@@ -24,6 +24,33 @@
 
 import game
 
+class Map():
+    def __init__(self):
+        self.map = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        ]
+        import sdl_sprite
+        self.image = sdl_sprite.SDLSprite('res/border.png', (24, 12))
+    def draw(self, pos):
+        if self.map[pos[0]][pos[1]] == 1:
+            self.image.pos = [pos[0]*24, pos[1]*12]
+            return self.image
+        
 class MyPlayer(game.Player):
     def __init__(self):
         game.Player.__init__(self)
@@ -46,7 +73,7 @@ class MyGame(game.Game):
         self.d2image2     = sdl_sprite.SDLSprite('res/money.png')
         self.d2image2.pos = (220, 20)
         self.player       = MyPlayer()
-        
+        self.map = Map()
         self.player.collisions = [self.d2image2]
         
     def process_events(self):
@@ -62,6 +89,9 @@ class MyGame(game.Game):
         
     def draw_bg(self):
         game.Game.draw_bg(self)
+        for i in range(10):
+            for j in range(10):
+                print self.map.draw(i, j)
         self.window.draw_image(self.d2image1)        
 
     def draw_fg(self):
