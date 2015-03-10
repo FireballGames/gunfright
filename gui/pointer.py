@@ -58,11 +58,15 @@ class Pointer(pygame.sprite.Sprite):
     def process_event(self, e, moneybags):
         import pygame, sound
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
-            if self.in_active() and self.player.shoot():
-                sound.play_shoot()
-                self.intersect(moneybags, self.player)
+            if self.in_active():
+                if self.player.shoot():
+                    sound.play('res/sounds/shot.wav')
+                    self.intersect(moneybags, self.player)
+                else:
+                    sound.play('res/sounds/no_shot.wav')
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
             self.player.reload()
+            sound.play('res/sounds/reload.wav')
 
 def main():
     return 0
