@@ -39,11 +39,11 @@ def play_intro():
     
 def play_shoot():
     print 'Playing shoot'
-    # pygame.mixer.Sound("Data/Sounds/disparo.wav").play()
+    pygame.mixer.Sound('res/Sounds/shot.wav').play()
     
 def play_hit():
     print 'Playing hit'
-    # pygame.mixer.Sound("Data/Sounds/risa2.wav").play()
+    pygame.mixer.Sound('res/Sounds/hit.mp3').play()
 
 def play_loose():
     print 'Playing loose'
