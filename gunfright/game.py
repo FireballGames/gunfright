@@ -25,6 +25,7 @@
 
 import d2game.game
 import gunfright.player
+import gunfright.subgame.bountyshooter
 import gui
 
 
@@ -40,8 +41,10 @@ class Game(d2game.game.Game):
         screens.intro.show(self.config.screen('intro'))
         gui.init_game(self)
 
+        self.subgames = [
+            gunfright.subgame.bountyshooter.Game(self.player, self.config)
+        ]
         self.state = d2game.GAMEPLAY
-        self.load_level(1)
 
     def win(self):
         d2game.game.Game.win(self)
@@ -61,27 +64,23 @@ class Game(d2game.game.Game):
         screens.nextlev.show(self)
 
         print("Shoot money subgame")
-        import screens.shootmoney
-        screens.shootmoney.show(self)
+        self.subgames[0].load_level(self.player.level)
+        self.play_subgame(0)
 
         print("Main subgame")
 
         print("Shoot bandit subgame")
 
+        self.win()
         self.player.level += 1
-        self.load_level(self.player.level)
 
         print("State: %s"%(self.state))
 
-    def load_level(self, level):
-        import config
-        import level
-        level_data = config.level(level)
-
-        print level_data['type']
-        if level_data['type'] == 'bounty':
-            level_data['player'] = self.player
-            self.level = level.ShootBounty(**level_data)
+    def play_subgame(self, index):
+        self.subgames[index].play()
+        self.state = self.subgames[index].state
+        if self.state == d2game.GAMELOOSE: self.loose()
+        if self.state == d2game.GAMEWIN: self.win()
 
 def main():
     print("Gunfright game globals")
