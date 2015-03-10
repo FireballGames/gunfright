@@ -22,10 +22,39 @@
 #
 #
 
+import pygame
+import config
+
 
 class Reslib():
     def __init__(self):
-        pass
+        pygame.font.init()
+
+        self.images = {}
+
+        c = config.config()
+        for key in c.backgrounds.keys():
+            self.images[key] = pygame.image.load(c.backgrounds[key])
+
+        self.images['icon'] = pygame.image.load(c.window["icon"])
+        # self.images['intro'] = pygame.image.load("res/intro.png")
+
+        self.font = pygame.font.Font(None, c.text_size)
+
+    def args(self):
+        return self.images.keys()
+
+    def add_args(self, args):
+        print("Args: %s" % (args))
+
+    def load(self, index, alpha = False):
+        image = self.images[index]
+        if alpha:
+            image.convert_alpha()
+        return image
+
+    def text(self):
+        return self.font
 
 
 def main():

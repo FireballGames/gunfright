@@ -34,9 +34,9 @@ class Game(d2game.game.Game):
         self.state = d2game.GAMEPLAY
         self.load_level(self.player.level)
 
-    def play(self):
+    def run(self):
         print("Running bounty shooter")
-        d2game.game.Game.play(self)
+        # d2game.game.Game.play(self)
 
         import screens.shootmoney
         screens.shootmoney.show(self)

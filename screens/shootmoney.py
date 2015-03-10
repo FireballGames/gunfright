@@ -110,8 +110,7 @@ class ShootMoney(gui.screen.PlayScreen):
 
     def process_event(self, e):
         import gui
-        if e.type == pygame.QUIT:
-            self.showing = False
+        if not self.showing:
             gui.g.end()
 
         self.interface.pointer.process_event(e, moneybags)

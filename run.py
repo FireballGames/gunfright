@@ -32,8 +32,7 @@ def main():
 
     print("Loading game configuration")
     mygame = Game(config.load('game.yml'))
-    while mygame.state > d2game.GAMEOVER:
-        mygame.play()
+    mygame.run()
     mygame.quit()
 
 if __name__ == '__main__':

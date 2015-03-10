@@ -32,16 +32,24 @@ class Game(object):
         self.config = params
         self.state = GAMEOVER
 
+        import gui
         import d2lib.reslib
         self.resources = d2lib.reslib.Reslib()
+        gui.res = self.resources
 
         import player
         self.player = player.Player(params)
 
-    def play(self):
+    def run(self):
         """When game starts"""
         print("Playing game")
         self.state = GAMEPLAY
+        while self.state > GAMEOVER:
+            self.play()
+
+    def play(self):
+        """Game main loop"""
+        pass
 
     def win(self):
         """When player wins the game"""

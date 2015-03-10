@@ -4,20 +4,30 @@ window:
   icon:  res/icon.png
 text_size:  34
 main_theme: res/sounds/duel.mp3
+backgrounds:
+  intro:   res/intro.png
+  win:     res/win.png
+  loose:   res/loose.png
+  nextlev: res/town.png
+  bounty:  res/town.png
+  gui:     res/interface.png
+sounds:
+  theme: res/sounds/duel.mp3
+  loose: res/sounds/loose.mp3
 screens:
   intro:
-    background: res/intro.png
+    background: intro
     sound:      res/sounds/duel.mp3
     sleep:      2
   win:
-    background: res/win.png
+    background: win
     sleep:      2
   loose:
-    background: res/loose.png
+    background: loose
     sound:      'res/sounds/loose.mp3'
     sleep:      2
   nextlev:
-    background: res/town.png
+    background: nextlev
     sound:      False
     sleep:      2
   shootmoney:
@@ -26,11 +36,11 @@ screens:
     sleep:      2
     showing:    True
   gui:
-    background: res/interface.png
+    background: gui
 levels:
 - 
     type:       bounty
-    background: res/town.png
+    background: bounty 
     time:       30000
     score:      1000
     bounties:

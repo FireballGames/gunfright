@@ -77,7 +77,7 @@ class Game(d2game.game.Game):
         print("State: %s"%(self.state))
 
     def play_subgame(self, index):
-        self.subgames[index].play()
+        self.subgames[index].run()
         self.state = self.subgames[index].state
         if self.state == d2game.GAMELOOSE: self.loose()
         if self.state == d2game.GAMEWIN: self.win()
