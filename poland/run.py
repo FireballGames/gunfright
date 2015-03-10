@@ -24,31 +24,66 @@
 
 import game
 
+map_tpl = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,1,0,0,0,0,1,0,0,1,0,1,0,0,1,1],
+    [1,0,0,0,1,0,0,0,0,1,0,1,0,1,1,1],
+    [1,0,1,0,1,0,0,0,0,0,0,1,0,0,1,1],
+    [1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1],
+    [1,0,0,1,1,0,0,0,0,0,0,1,0,1,0,1],
+    [1,0,0,0,0,0,1,1,1,1,0,1,0,0,0,1],
+    [1,0,0,1,0,0,1,0,0,1,0,1,1,0,1,1],
+    [1,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
+    [1,0,0,1,0,0,1,1,1,1,0,1,0,0,0,1],
+    [1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1],
+    [1,0,0,0,1,0,0,1,1,1,0,1,0,0,0,1],
+    [1,0,0,0,1,1,0,0,0,1,0,1,0,0,0,1],
+    [1,0,1,0,0,0,1,1,0,1,0,1,0,0,0,1],
+    [1,0,0,0,0,0,1,0,0,1,0,1,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+]
+
 class Map():
     def __init__(self):
-        self.map = [
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        ]
+        global map_tpl
+        
+        self.map = []
+        for y in range(len(map_tpl)):
+            row  = map_tpl[y]
+            rows = [[],[],[],[]]
+            for x in range(len(row)):
+                w = row[x]
+                for i in range(4):
+                    for j in range(4):
+                        if (i==0)and(j==0):
+                            rows[i].append(w*3)
+                        elif (j<=0):
+                            rows[i].append(w)
+                        elif (i<=0):
+                            rows[i].append(w*2)
+                        elif (i==3)and(j==3):
+                            rows[i].append(w*6)
+                        elif (j>=3):
+                            rows[i].append(w*5)
+                        elif (i>=3):
+                            rows[i].append(w*4)
+                        else:
+                            rows[i].append(0)
+            for i in range(4):
+                self.map.append(rows[i])
+        
         import sdl_sprite
-        self.image = sdl_sprite.SDLSprite('res/border.png', (24, 12))
+        self.image = sdl_sprite.SDLSprite('res/border.png', (24, 24))
     def draw(self, pos):
-        if self.map[pos[0]][pos[1]] == 1:
-            self.image.pos = [pos[0]*24, pos[1]*12]
+        if self.map[pos[1]][pos[0]] > 0:
+            self.image.frame = self.map[pos[1]][pos[0]] - 1
+            # if (pos[0]%5)==0:
+            #     self.frame = 0
+            # else:
+            #     self.frame = 1
+            ix = (pos[0]-pos[1])*22 + 400
+            iy = (pos[0]+pos[1])*10 + 300
+            self.image.pos = [ix, iy]
             return self.image
         
 class MyPlayer(game.Player):
@@ -74,7 +109,7 @@ class MyGame(game.Game):
         self.d2image2.pos = (220, 20)
         self.player       = MyPlayer()
         self.map = Map()
-        self.player.collisions = [self.d2image2]
+        # self.player.collisions = [self.d2image2]
         
     def process_events(self):
         game.Game.process_events(self)
@@ -89,9 +124,12 @@ class MyGame(game.Game):
         
     def draw_bg(self):
         game.Game.draw_bg(self)
-        for i in range(10):
-            for j in range(10):
-                print self.map.draw(i, j)
+        for i in range(len(self.map.map)):
+            row = self.map.map[i]
+            for j in range(len(row)):
+                im = self.map.draw((i, j))
+                if not im is None:
+                    self.window.draw_image(im)
         self.window.draw_image(self.d2image1)        
 
     def draw_fg(self):
