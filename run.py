@@ -2,44 +2,39 @@
 # -*- coding: utf-8 -*-
 #
 #  run.py
-#  
+#
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#  
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#  
-#  
+#
+#
+
+
+import config
+from gunfright.game import Game
+import d2game
+
 
 def main():
-    import config
-    params = config.load('game.yml')
 
-    import gui
-    gui.init_gui(config.config())
-    
-    import screens.intro
-    screens.intro.show(config.screen('intro'))
-
-    import game
-    mygame = game.Game(config.config())
-    gui.init_game(mygame)
-
-    import mainloop
-    mainloop.show(mygame)
-    
-    return 0
+    print("Loading game configuration")
+    mygame = Game(config.load('game.yml'))
+    while mygame.state > d2game.GAMEOVER:
+        mygame.play()
+    mygame.quit()
 
 if __name__ == '__main__':
     main()
