@@ -25,7 +25,6 @@
 
 import config
 from gunfright.game import Game
-import d2game
 
 
 def main():
@@ -33,8 +32,6 @@ def main():
     print "-----------------------------------------------------------"
     print("Loading game configuration")
     mygame = Game(config.load('game.yml'))
-    # play   = screen_intro()
-    # player = Player()
     mygame.run()
     mygame.quit()
     print "-----------------------------------------------------------"

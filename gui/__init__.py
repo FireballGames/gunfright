@@ -53,10 +53,12 @@ class PygameWin():
         # Setting default values
         flag = pygame.DOUBLEBUF
 
+        print(args)
+
         # Loading values from args
         # screen_data = config['screens']
-        if 'screen_size' in args:
-            self.screen_size = args['screen_size']
+        if 'size' in args:
+            self.screen_size = args['size']
         if 'flag' in args:
             flag = args['flag']
 
@@ -69,7 +71,7 @@ class PygameWin():
         if 'icon' in res.args():
             pygame.display.set_icon(res.load('icon', alpha=True))
         if 'show_mouse' in args:
-            pygame.mouse.set_visible(iargs['show_mouse'])
+            pygame.mouse.set_visible(args['show_mouse'])
 
         return self.surface
 
@@ -107,12 +109,12 @@ def init_gui(config):
     print config
     screen_data = config.screens
 
-    gui = PygameWin(
-        screen_size = (800, 600),
-        title = u'Проверка',
-        icon = config.window['icon'],
-        main_theme = config.main_theme
-    )
+    print(config.window)
+    win_config = config.window
+    win_config.update({
+        'main_theme': config.main_theme
+    })
+    gui = PygameWin(**win_config)
 
 
 def init_game(game):

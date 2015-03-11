@@ -2,15 +2,16 @@ window:
   size:  [800, 600]
   title: 'Уравнение Кольта'
   icon:  res/icon.png
+  show_mouse: 0
 text_size:  34
 main_theme: res/sounds/duel.mp3
 backgrounds:
   intro:   res/intro.png
   win:     res/win.png
   loose:   res/loose.png
-  nextlev: res/town.png
+  nextlev: res/town_big.jpg
   bounty:  res/town.png
-  gui:     res/interface.png
+  gui:     res/gui.png
 sounds:
   theme: res/sounds/duel.mp3
   loose: res/sounds/loose.mp3
