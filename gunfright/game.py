@@ -24,10 +24,11 @@
 
 
 import d2game.game
+import gui
+import gui.controls
 import gunfright.player
 import gunfright.subgame.bountyshooter
 import gunfright.subgame.seekbandit
-import gui
 
 
 class Game(d2game.game.Game):
@@ -37,10 +38,9 @@ class Game(d2game.game.Game):
         self.player = gunfright.player.Player(self.config)
         print("Bonus: %s" % (self.player.bonus))
 
-        import screens.intro
-
         gui.init_gui(self.config)
-        screens.intro.show(self.config.screen('intro'))
+        screen = gui.controls.Splash(self.config.screen('intro'))
+        screen.show()
         gui.init_game(self)
 
         self.subgames = [
@@ -64,14 +64,21 @@ class Game(d2game.game.Game):
         d2game.game.Game.play(self)
 
         print("Next level screen")
-        import screens.nextlev
-        screens.nextlev.show(self)
+        screen = gui.controls.Splash(self.config.screen('nextlev'))
+        screen.controls["text"] = gui.controls.ControlText(
+            "Level %s",
+            pos = (100, 100),
+            size = 32,
+        )
+        screen.controls["text"].prepare(self.player.level)
+        screen.show()
         print "--------------------"
 
         for i in range(2):
             self.subgames[i].load_level(self.player.level)
             self.play_subgame(i)
-            if self.state <> d2game.GAMEPLAY: return
+            if self.state != d2game.GAMEPLAY:
+                return
             print "--------------------"
 
         print("Shoot bandit subgame")
@@ -79,21 +86,22 @@ class Game(d2game.game.Game):
         self.player.bonus = True
         self.subgames[2].load_level(self.player.level)
         self.play_subgame(2)
-        if self.state <> d2game.GAMEPLAY: return
+        if self.state != d2game.GAMEPLAY:
+            return
         print "--------------------"
 
         self.win()
         self.player.levelup()
         self.state = d2game.GAMEPLAY
 
-        print("State: %s"%(self.state))
+        print("State: %s" % (self.state))
         print "--------------------"
-
 
     def play_subgame(self, index):
         self.subgames[index].run()
         self.state = self.subgames[index].state
-        if self.state == d2game.GAMELOOSE: self.loose()
+        if self.state == d2game.GAMELOOSE:
+            self.loose()
         if self.state == d2game.GAMEWIN:
             self.state = d2game.GAMEPLAY
 
