@@ -26,6 +26,7 @@
 import d2game.game
 import gunfright.player
 import gunfright.subgame.bountyshooter
+import gunfright.subgame.seekbandit
 import gui
 
 
@@ -34,6 +35,7 @@ class Game(d2game.game.Game):
     def __init__(self, params):
         d2game.game.Game.__init__(self, params)
         self.player = gunfright.player.Player(self.config)
+        print("Bonus: %s" % (self.player.bonus))
 
         import screens.intro
 
@@ -42,6 +44,8 @@ class Game(d2game.game.Game):
         gui.init_game(self)
 
         self.subgames = [
+            gunfright.subgame.bountyshooter.Game(self.player, self.config),
+            gunfright.subgame.seekbandit.Game(self.player, self.config),
             gunfright.subgame.bountyshooter.Game(self.player, self.config)
         ]
         self.state = d2game.GAMEPLAY
@@ -62,25 +66,37 @@ class Game(d2game.game.Game):
         print("Next level screen")
         import screens.nextlev
         screens.nextlev.show(self)
+        print "--------------------"
 
-        print("Shoot money subgame")
-        self.subgames[0].load_level(self.player.level)
-        self.play_subgame(0)
-
-        print("Main subgame")
+        for i in range(2):
+            self.subgames[i].load_level(self.player.level)
+            self.play_subgame(i)
+            if self.state <> d2game.GAMEPLAY: return
+            print "--------------------"
 
         print("Shoot bandit subgame")
+        # found = banditshooter.test(player)
+        self.player.bonus = True
+        self.subgames[2].load_level(self.player.level)
+        self.play_subgame(2)
+        if self.state <> d2game.GAMEPLAY: return
+        print "--------------------"
 
         self.win()
-        self.player.level += 1
+        self.player.levelup()
+        self.state = d2game.GAMEPLAY
 
         print("State: %s"%(self.state))
+        print "--------------------"
+
 
     def play_subgame(self, index):
         self.subgames[index].run()
         self.state = self.subgames[index].state
         if self.state == d2game.GAMELOOSE: self.loose()
-        if self.state == d2game.GAMEWIN: self.win()
+        if self.state == d2game.GAMEWIN:
+            self.state = d2game.GAMEPLAY
+
 
 def main():
     print("Gunfright game globals")

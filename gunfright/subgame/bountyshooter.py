@@ -35,6 +35,9 @@ class Game(d2game.game.Game):
         self.load_level(self.player.level)
 
     def run(self):
+        print("Shoot money subgame")
+        if not self.player.bonus: return
+
         print("Running bounty shooter")
         # d2game.game.Game.play(self)
 
@@ -46,7 +49,6 @@ class Game(d2game.game.Game):
         import gunfright.level
         level_data = config.level(level)
 
-        print level_data['type']
         if level_data['type'] == 'bounty':
             level_data['player'] = self.player
             self.level = gunfright.level.ShootBounty(**level_data)
