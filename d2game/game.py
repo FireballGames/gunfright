@@ -44,7 +44,7 @@ class Game(object):
         """When game starts"""
         print("Playing game")
         self.state = GAMEPLAY
-        while self.state > GAMEOVER:
+        while self.state == GAMEPLAY:
             self.play()
 
     def play(self):
