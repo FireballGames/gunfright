@@ -75,6 +75,15 @@ class PygameWin():
 
         return self.surface
 
+    def clear(self):
+        self.surface.fill((0, 0, 0))
+
+    def draw_image(self, image, pos=(0, 0)):
+        self.surface.blit(image, pos)
+
+    def draw(self):
+        pygame.display.flip()
+
 
 class MainGui(screen.Screen):
     pointer = False

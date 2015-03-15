@@ -89,30 +89,6 @@ class Screen(pygame.sprite.Sprite):
             time.sleep(self.sleep)
 
 
-class PlayScreen(Screen):
-    showing = False
-
-    def __init__(self, **config):
-        Screen.__init__(self, **config)
-
-        if "showing" in config:
-            self.showing = config["showing"]
-
-    def show_screen(self, window):
-        self.play_sound()
-
-        while self.showing:
-            for e in pygame.event.get():
-                if e.type == pygame.QUIT:
-                    self.showing = False
-                if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-                    self.showing = False
-
-                self.process_event(e)
-            self.show_image(window)
-            pygame.display.flip()
-            pygame.time.delay(self.sleep)
-
 def main():
     return 0
 

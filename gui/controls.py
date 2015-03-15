@@ -42,8 +42,8 @@ class Splash():
             self.sound = config["sound"]
 
         self.rect = self.image.get_rect()
-        self.rect.x += self.bg_pos[0]
-        self.rect.y += self.bg_pos[1]
+        self.rect.x += self.bg_pos[0] + (gui.gui.screen_size[0] - self.rect.width) / 2
+        self.rect.y += self.bg_pos[1] + (gui.gui.screen_size[1] - self.rect.height) / 2
 
     def show(self):
         import gui

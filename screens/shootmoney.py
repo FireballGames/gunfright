@@ -72,7 +72,14 @@ class Moneybag(pygame.sprite.Sprite):
             return [s.image, s.rect]
 
 
-class ShootMoney(gui.screen.PlayScreen):
+class ShootMoney(gui.screen.Screen):
+    def show_screen(self, window):
+        self.play_sound()
+        while self.showing:
+            self.show_image(window)
+            pygame.display.flip()
+            pygame.time.delay(self.sleep)
+
     def blit_screen(self, window):
         import gui
         global moneybags
@@ -106,6 +113,7 @@ class ShootMoney(gui.screen.PlayScreen):
         self.moneybag.set_colorkey([255, 0, 255])
 
         self.interface.pointer.active = self
+        self.showing = True
         moneybags = pygame.sprite.Group()
 
     def process_event(self, e):

@@ -31,6 +31,11 @@ class Game(d2game.game.Game):
 
     def __init__(self, player, params):
         d2game.game.Game.__init__(self, params)
+
+        import gui
+        gui.g = self
+
+        print("Shoot money subgame")
         self.player = player
         self.state = d2game.GAMEPLAY
         self.load_level(self.player.level)
@@ -53,26 +58,57 @@ class Game(d2game.game.Game):
                 size=16
             )
         }
+        self.screen = None
 
     def run(self):
-        print("Shoot money subgame")
-        if not self.player.bonus:
-            return
-
         print("Running bounty shooter")
-        # d2game.game.Game.play(self)
+        # self.play_sound()
+        d2game.game.Game.run(self)
+
+        self.player.bonus = False
+        # screens.shootmoney.show(self)
+
+    def play(self):
+        gui.gui.clear()
+
+        d2game.game.Game.play(self)
+
+        self.screen.show_image(gui.gui.surface)
+
+        import pygame
+        pygame.display.flip()
+        pygame.time.delay(2)
+        # self.screen.show_screen(gui.gui.surface)
+
+        if not self.screen.showing:
+            self.win()
+
+    def process_event(self, event):
+        d2game.game.Game.process_event(self, event)
 
         import screens.shootmoney
-        screens.shootmoney.show(self)
+        self.screen.interface.pointer.process_event(event, screens.shootmoney.moneybags)
 
     def load_level(self, level):
         import config
         import gunfright.level
         level_data = config.level(level)
+        level_screen = config.screen('shootmoney')
+        level_screen.update({
+            'background': level_data["background"],
+            'interface':  gui.i
+        })
 
         if level_data['type'] == 'bounty':
             level_data['player'] = self.player
             self.level = gunfright.level.ShootBounty(**level_data)
+
+        if not self.player.bonus:
+            return
+
+        import screens.shootmoney
+        self.screen = screens.shootmoney.ShootMoney(**level_screen)
+        self.screen.init_win()
 
     def draw(self):
         self.controls['main'].show()

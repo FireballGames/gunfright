@@ -32,7 +32,6 @@ screens:
     sound:      False
     sleep:      2
   shootmoney:
-    pos:        [50, 50]
     sound:      False
     sleep:      2
     showing:    True

@@ -35,12 +35,11 @@ class Game(d2game.game.Game):
 
     def __init__(self, params):
         d2game.game.Game.__init__(self, params)
+
         self.player = gunfright.player.Player(self.config)
-        print("Bonus: %s" % (self.player.bonus))
 
         gui.init_gui(self.config)
-        screen = gui.controls.Splash(self.config.screen('intro'))
-        screen.show()
+        gui.controls.Splash(self.config.screen('intro')).show()
         gui.init_game(self)
 
         self.subgames = [
@@ -60,9 +59,9 @@ class Game(d2game.game.Game):
         self.quit()
 
     def play(self):
-        print("Running the game")
         d2game.game.Game.play(self)
 
+        print("Running the game")
         print("Next level screen")
         screen = gui.controls.Splash(self.config.screen('nextlev'))
         screen.controls["text"] = gui.controls.ControlText(
@@ -74,21 +73,20 @@ class Game(d2game.game.Game):
         screen.show()
         print "--------------------"
 
-        for i in range(2):
+        for i in range(3):
             self.subgames[i].load_level(self.player.level)
             self.play_subgame(i)
             if self.state != d2game.GAMEPLAY:
                 return
             print "--------------------"
 
-        print("Shoot bandit subgame")
-        # found = banditshooter.test(player)
-        self.player.bonus = True
-        self.subgames[2].load_level(self.player.level)
-        self.play_subgame(2)
-        if self.state != d2game.GAMEPLAY:
-            return
-        print "--------------------"
+        # print("Shoot bandit subgame")
+        # self.player.bonus = True
+        # self.subgames[2].load_level(self.player.level)
+        # self.play_subgame(2)
+        # if self.state != d2game.GAMEPLAY:
+        #    return
+        # print "--------------------"
 
         self.win()
         self.player.levelup()
@@ -104,6 +102,7 @@ class Game(d2game.game.Game):
             self.loose()
         if self.state == d2game.GAMEWIN:
             self.state = d2game.GAMEPLAY
+        print "--------------------"
 
 
 def main():

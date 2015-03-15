@@ -30,28 +30,41 @@ class Game(d2game.game.Game):
 
     def __init__(self, player, params):
         d2game.game.Game.__init__(self, params)
+        # self.map = Map()
         self.map = []
+        # self.player = MyPlayer()
         self.player = player
         self.state = d2game.GAMEPLAY
         self.load_level(self.player.level)
 
     def play(self):
+        d2game.game.Game.play(self)
+
+        import gui
+        gui.gui.clear()
+
         # global size_x, size_y, people, bandit
 
         print("Seek")
         # find = player.seek(bandit)
-        import random
-        chance = random.randrange(100)
-        find = (chance < 25)
+        # import random
+        # chance = random.randrange(100)
+        # find = (chance < 5)
+        find = False
         # for p in people:
-            # p.move(random.randrange(4))
-            # if (p.pos[0]==player.pos[0])and(p.pos[1]==player.pos[1]):
-                # print 'Hit by people'
-                # return player.loose()
-            # print p.pos
+        #    # p.move(random.randrange(4))
+        #    # if (p.pos[0]==player.pos[0])and(p.pos[1]==player.pos[1]):
+        #        # print 'Hit by people'
+        #        # return player.loose()
+        #    # print p.pos
         # bandit.move(random.randrange(4))
 
         self.show_controls()
+
+        import pygame
+        pygame.display.flip()
+        pygame.time.delay(2)
+
         if find:
             self.state = d2game.GAMEWIN
 
@@ -73,7 +86,7 @@ class Game(d2game.game.Game):
         pass
 
     def generate_map(self, map_x, map_y):
-        print("Generate map (%s x %s)"%(map_x, map_y))
+        print("Generate map (%s x %s)" % (map_x, map_y))
         for j in range(map_y):
             row = []
             for i in range(map_x):
@@ -81,6 +94,15 @@ class Game(d2game.game.Game):
                 row.append(random.randrange(10))
             self.map.append(row)
         return
+
+    def draw_map(self):
+        for i in range(len(self.map.map)):
+            row = self.map.map[i]
+            for j in range(len(row)):
+                im = self.map.draw((i, j))
+                if im is not None:
+                    self.window.draw_image(im)
+        pass
 
     def show_controls(self):
         # draw_map(player.pos[0], player.pos[1], 8, 8)
@@ -92,6 +114,22 @@ class Game(d2game.game.Game):
             'lives':  self.player.lives
         })
         return
+
+    def process_events(self):
+        d2game.game.Game.process_events(self)
+
+        import pygame
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP]:
+            self.player.move(0, -1)
+        elif keys[pygame.K_DOWN]:
+            self.player.move(0, 1)
+        elif keys[pygame.K_LEFT]:
+            self.player.move(-1, 0)
+        elif keys[pygame.K_RIGHT]:
+            self.player.move(1, 0)
+
 
 def main():
     print("Gunfright game globals")
