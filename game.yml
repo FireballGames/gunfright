@@ -14,7 +14,7 @@ backgrounds:
   gui:     res/gui.png
 controls:
   mouse:  res/mouse.png
-  drum:   res/drum.jpg
+  drum:   res/revolver.png
   player: res/quickdraw.png
 sounds:
   theme: res/sounds/duel.mp3
