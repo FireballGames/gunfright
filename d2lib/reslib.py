@@ -35,6 +35,8 @@ class Reslib():
         c = config.config()
         for key in c.backgrounds.keys():
             self.images[key] = pygame.image.load(c.backgrounds[key])
+        for key in c.controls.keys():
+            self.images[key] = pygame.image.load(c.controls[key])
 
         self.images['icon'] = pygame.image.load(c.window["icon"])
         # self.images['intro'] = pygame.image.load("res/intro.png")

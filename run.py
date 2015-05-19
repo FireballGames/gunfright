@@ -29,12 +29,12 @@ from gunfright.game import Game
 
 def main():
 
-    print "-----------------------------------------------------------"
+    print("-----------------------------------------------------------")
     print("Loading game configuration")
     mygame = Game(config.load('game.yml'))
     mygame.run()
     mygame.quit()
-    print "-----------------------------------------------------------"
+    print("-----------------------------------------------------------")
 
 if __name__ == '__main__':
     main()

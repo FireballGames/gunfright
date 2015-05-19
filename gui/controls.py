@@ -66,6 +66,51 @@ class Splash():
             time.sleep(self.sleep)
 
 
+class GUI():
+    def __init__(self, config):
+        import gui
+
+        self.controls = {}
+
+        if "background" in config:
+            self.image = gui.res.load(config["background"])
+
+        self.rect = self.image.get_rect()
+        self.rect.x += (gui.gui.screen_size[0] - self.rect.width) / 2
+        self.rect.y += (gui.gui.screen_size[1] - self.rect.height) / 2
+
+    def show(self):
+        import gui
+
+        gui.gui.surface.blit(self.image, self.rect)
+
+        for c in self.controls:
+            self.controls[c].show(gui.gui.surface)
+
+
+class MapPlayer():
+    def __init__(self, config):
+        import gui
+
+        self.image = None
+
+        if "image" in config:
+            self.image = gui.res.load(config["image"])
+        if "pos" in config:
+            self.pos = config["pos"]
+        else:
+            self.pos = [0, 0]
+        self.rect = self.image.get_rect()
+        self.rect.x += self.pos[0] - (self.rect.width / 2)
+        self.rect.y += self.pos[1] - (self.rect.height / 2)
+
+    def show(self):
+        print("Show player")
+        import gui
+
+        gui.gui.surface.blit(self.image, self.rect)
+
+
 class ControlShoot():
     def __init__(self, pos = (0, 0), size = (0, 0)):
         self.pos = pos

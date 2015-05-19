@@ -32,13 +32,10 @@ class Game(d2game.game.Game):
     def __init__(self, player, params):
         d2game.game.Game.__init__(self, params)
 
-        import gui
-        gui.g = self
-
         print("Shoot money subgame")
         self.player = player
-        self.state = d2game.GAMEPLAY
-        self.load_level(self.player.level)
+
+        import gui
         self.controls = {
             'main': gui.controls.ControlShoot(
                 pos = (1, 1),
@@ -59,14 +56,18 @@ class Game(d2game.game.Game):
             )
         }
         self.screen = None
+        self.level = None
 
     def run(self):
         print("Running bounty shooter")
+        import gui
+        gui.g = self
+
         # self.play_sound()
+        self.load_level(self.player.level)
         d2game.game.Game.run(self)
 
         self.player.bonus = False
-        # screens.shootmoney.show(self)
 
     def play(self):
         gui.gui.clear()
@@ -90,6 +91,8 @@ class Game(d2game.game.Game):
         self.screen.interface.pointer.process_event(event, screens.shootmoney.moneybags)
 
     def load_level(self, level):
+        print("Loading level %s" % (level))
+
         import config
         import gunfright.level
         level_data = config.level(level)
@@ -102,6 +105,8 @@ class Game(d2game.game.Game):
         if level_data['type'] == 'bounty':
             level_data['player'] = self.player
             self.level = gunfright.level.ShootBounty(**level_data)
+        else:
+            self.level = None
 
         if not self.player.bonus:
             return

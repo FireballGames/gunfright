@@ -61,6 +61,12 @@ class People():
         self.pos = n
 
 
+class Wall():
+    def __init__(self, is_passable, sprite_id):
+        self.is_passable = is_passable
+        self.image = sprite_id
+
+
 class Building():
     def __init__(self, walls, floor=0):
         self.walls = walls
@@ -83,69 +89,36 @@ def draw_map(x, y, sx, sy):
 
 
 class Map():
-    def __init__(self, size_x, size_y):
-        stop_wall = {
-            'has_exit': 0,
-            'tiles': (29, 29)
-        }
-        stop_building = Building((stop_wall, stop_wall), 9)
-
-        self.generate_walls(10)
-        self.generate_buildings(10)
+    def __init__(self, size):
         self.map = []
 
-        for x in range(size_x):
-            col = []
-            for y in range(size_y):
-                if (x <= 0) or (x >= size_x - 1) or (y <= 0) or (y >= size_y - 1):
-                    building = stop_building
-                else:
-                    if random.randrange(100) < 50:
-                        building = self.buildings[0]
-                    else:
-                        building = self.buildings[random.randrange(len(self.buildings))]
-                col.append(building)
-            self.map.append(col)
+        self.generate_walls()
+        self.generate_buildings()
+        self.generate_map(size)
 
         # for i in range(random.randrange(size_x, size_x*size_y/2)):
-            # p = [random.randrange(size_x*5), random.randrange(size_y*5)]
-            # people.append(
-            #    People(p[0], p[1])
-            # )
+        #   p = [random.randrange(size_x*5), random.randrange(size_y*5)]
+        #   people.append(
+        #       People(p[0], p[1])
+        #   )
 
-    def generate_walls(self, count):
-        wall = {
-            'has_exit': 1,
-            'tiles': (
-                20,
-                20,
-            )
-        }
-        self.walls = [wall]
+    def generate_walls(self):
+        self.walls = [
+            Wall(True, 0),
+            Wall(False, 1),
+            Wall(True, 2)
+        ]
 
-        images = (range(1, 9), range(1, 9))
-        for i in range(count):
-            wall = {
-                'has_exit': random.randrange(2) < 1,
-                'tiles': (
-                    images[0][random.randrange(len(images[0]))] + 20,
-                    images[1][random.randrange(len(images[1]))] + 20,
-                )
-            }
-            self.walls.append(wall)
+    def generate_buildings(self):
+        self.buildings = [
+            Building([None]*4, 0),
+            Building([self.walls[1]]*4, 0)
+        ]
 
-    def generate_buildings(self, count):
-        self.buildings = [Building((self.walls[0], self.walls[0]), 0)]
-
-        images = range(1, 9)
-        for i in range(count):
-            self.buildings.append(Building(
-                (
-                    self.walls[random.randrange(len(self.walls))],
-                    self.walls[random.randrange(len(self.walls))],
-                ),
-                images[random.randrange(len(images))]
-            ))
+        for i in range(4):
+            b_walls = [self.walls[2]]*4
+            b_walls[i] = self.walls[1]
+            self.buildings.append(Building(b_walls, 1))
 
     def get_tile(self, x, y):
         room = self.map[int(x/5)][int(y/5)]
@@ -187,6 +160,25 @@ class Map():
                 row.append(tile)
             print row
             rows.append(row)
+
+    def generate_map(self, size):
+        self.map = []
+
+        for x in range(size[0]):
+            col = []
+            for y in range(size[1]):
+                if self.is_border((x, y), size):
+                    building = self.buildings[1]
+                else:
+                    if random.randrange(100) < 50:
+                        building = self.buildings[0]
+                    else:
+                        building = self.buildings[random.randrange(len(self.buildings))]
+                col.append(building)
+            self.map.append(col)
+
+    def is_border(self, pos, size):
+        return (pos[0] <= 0) or (pos[0] >= size[0] - 1) or (pos[1] <= 0) or (pos[1] >= size[1] - 1)
 
 
 def main():

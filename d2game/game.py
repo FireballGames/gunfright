@@ -33,6 +33,7 @@ class Game(object):
         print("Initialization game")
         self.config = params
         self.state = d2game.GAMEOVER
+        self.subgames = []
 
         import gui
         # self.window    = sdl_window.SDLwindow(self.screen)
@@ -62,6 +63,20 @@ class Game(object):
         """Game main loop"""
         self.process_events()
         # self.window.clear()
+
+    def play_subgame(self, index):
+        if index not in range(len(self.subgames)):
+            return False
+
+        self.subgames[index].run()
+        self.state = self.subgames[index].state
+        if self.state == d2game.GAMELOOSE:
+            self.loose()
+        if self.state == d2game.GAMEWIN:
+            self.state = d2game.GAMEPLAY
+        print("--------------------")
+
+        return True
 
     def process_events(self):
         """Processs game events"""

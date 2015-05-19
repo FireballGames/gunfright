@@ -24,33 +24,95 @@
 
 
 import d2game.game
+import d2game.map
 
 
 class Game(d2game.game.Game):
 
     def __init__(self, player, params):
         d2game.game.Game.__init__(self, params)
-        # self.map = Map()
-        self.map = []
+
+        print("Seek bandit subgame")
         # self.player = MyPlayer()
         self.player = player
-        self.state = d2game.GAMEPLAY
+
+        self.map = d2game.map.Map((16, 16))
+        # self.map = []
+
+        import gui
+        self.controls = {
+            'main': gui.controls.ControlShoot(
+                pos = (1, 1),
+                size = (100, 100)
+            ),
+            'shots': gui.controls.ControlImageList(
+                gui.controls.ControlImage('Revolver'),
+                pos = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6))
+            ),
+            'lives': gui.controls.ControlImageList(
+                gui.controls.ControlImage('Hat'),
+                pos = ((1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1))
+            ),
+            'score': gui.controls.ControlText(
+                '$%s',
+                pos = (0, 0),
+                size = 16
+            ),
+            'map': gui.controls.ControlText(
+                '(%s)',
+                pos = (400, 0),
+                size = 16
+            ),
+            'player': gui.controls.MapPlayer({
+                "pos": [400, 300],
+                "image": "player"
+            })
+        }
+        self.screen = None
+        self.gui = gui.res.load("gui")
+
+    def run(self):
+        print("Running bandit seeker")
+
+        import gui
+        gui.g = self
+
         self.load_level(self.player.level)
+        d2game.game.Game.run(self)
 
     def play(self):
-        d2game.game.Game.play(self)
-
         import gui
         gui.gui.clear()
 
-        # global size_x, size_y, people, bandit
+        d2game.game.Game.play(self)
 
         print("Seek")
-        # find = player.seek(bandit)
-        # import random
-        # chance = random.randrange(100)
-        # find = (chance < 5)
-        find = False
+        bandit = None
+        find = self.player.seek(bandit)
+
+        self.draw()
+
+        import pygame
+        pygame.display.flip()
+        pygame.time.delay(2)
+
+        if find:
+            self.win()
+            # self.state = d2game.GAMEWIN
+
+    def load_level(self, level):
+        import config
+        # import gunfright.level
+        level_data = config.level(level)
+
+        self.map.generate_map((16, 16))
+        self.player.pos = [len(self.map.map)/2, len(self.map.map[0])/2]
+        # global people, bandit
+        # bandit = People(random.randrange(size_x*5), random.randrange(size_y*5))
+        pass
+
+    def move_objects(self):
+        # global people, bandit
         # for p in people:
         #    # p.move(random.randrange(4))
         #    # if (p.pos[0]==player.pos[0])and(p.pos[1]==player.pos[1]):
@@ -58,61 +120,29 @@ class Game(d2game.game.Game):
         #        # return player.loose()
         #    # print p.pos
         # bandit.move(random.randrange(4))
-
-        self.show_controls()
-
-        import pygame
-        pygame.display.flip()
-        pygame.time.delay(2)
-
-        if find:
-            self.state = d2game.GAMEWIN
-
-    def load_level(self, level):
-        import config
-        # import gunfright.level
-        level_data = config.level(level)
-
-        # global size_x, size_y, people, bandit
-        map_x = 16
-        map_y = 16
-        size_x = map_x * 5
-        size_y = map_y * 5
-        self.generate_map(map_x, map_y)
-        # bandit = People(random.randrange(size_x*5), random.randrange(size_y*5))
-
-        print("Running bandit seeker")
-        self.player.pos = [size_x/2, size_y/2]
         pass
-
-    def generate_map(self, map_x, map_y):
-        print("Generate map (%s x %s)" % (map_x, map_y))
-        for j in range(map_y):
-            row = []
-            for i in range(map_x):
-                import random
-                row.append(random.randrange(10))
-            self.map.append(row)
-        return
 
     def draw_map(self):
         for i in range(len(self.map.map)):
             row = self.map.map[i]
             for j in range(len(row)):
-                im = self.map.draw((i, j))
-                if im is not None:
-                    self.window.draw_image(im)
+                pass
+                # im = self.map.draw((i, j))
+                # if im is not None:
+                #     self.window.draw_image(im)
         pass
 
-    def show_controls(self):
+    def draw(self):
         # draw_map(player.pos[0], player.pos[1], 8, 8)
         print(self.map)
+        self.draw_map()
         print({
             'player': self.player.pos,
             'score':  self.player.score,
             'shots':  self.player.shots,
             'lives':  self.player.lives
         })
+        self.controls['player'].show()
         return
 
     def process_events(self):

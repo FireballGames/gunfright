@@ -76,17 +76,11 @@ class Player(d2game.player.Player):
         print("Chance %s vs %s" % (chance, 50))
         self.bonus = chance < 50
 
-    def move(self, dir):
+    def move(self, *dir):
         self.dir = dir
-        m = (
-            (1, 0),
-            (0, 1),
-            (-1, 0),
-            (0, -1)
-        )
 
-        self.pos[0] += m[dir][0]
-        self.pos[1] += m[dir][1]
+        self.pos[0] += dir[0]
+        self.pos[1] += dir[1]
 
         if self.pos[0] < 0:
             self.pos[0] = 0
@@ -98,24 +92,28 @@ class Player(d2game.player.Player):
             self.pos[1] = 90
 
     def seek(self, bandit):
-        dx = bandit.pos[0] - self.pos[0]
-        dy = bandit.pos[1] - self.pos[1]
+        # dx = bandit.pos[0] - self.pos[0]
+        # dy = bandit.pos[1] - self.pos[1]
 
-        if (dx == 0) and (abs(dy) < 8):
-            return True
-        if (dy == 0) and (abs(dx) < 8):
-            return True
+        # if (dx == 0) and (abs(dy) < 8):
+        #     return True
+        # if (dy == 0) and (abs(dx) < 8):
+        #     return True
 
-        if abs(dx) > abs(dy):
-            if dx > 0:
-                self.move(0)
-            else:
-                self.move(2)
-        else:
-            if dy > 0:
-                self.move(1)
-            else:
-                self.move(3)
+        # if abs(dx) > abs(dy):
+        #     if dx > 0:
+        #         self.move(0)
+        #     else:
+        #         self.move(2)
+        # else:
+        #     if dy > 0:
+        #         self.move(1)
+        #     else:
+        #         self.move(3)
+
+        # import random
+        # chance = random.randrange(100)
+        # find = (chance < 5)
 
         return False
 

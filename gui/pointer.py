@@ -28,8 +28,11 @@ import pygame
 class Pointer(pygame.sprite.Sprite):
     def __init__(self, player, active = False):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("res/mouse.png")
-        self.image.set_colorkey([255, 0, 255])
+
+        import gui
+        self.image = gui.res.load("mouse")
+        # pygame.image.load("res/mouse.png")
+        # self.image.set_colorkey([255, 0, 255])
         self.rect = self.image.get_rect()
         self.rect.x = 800/2
         self.rect.y = 600/2

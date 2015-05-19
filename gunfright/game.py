@@ -47,7 +47,6 @@ class Game(d2game.game.Game):
             gunfright.subgame.seekbandit.Game(self.player, self.config),
             gunfright.subgame.bountyshooter.Game(self.player, self.config)
         ]
-        self.state = d2game.GAMEPLAY
 
     def win(self):
         d2game.game.Game.win(self)
@@ -71,14 +70,14 @@ class Game(d2game.game.Game):
         )
         screen.controls["text"].prepare(self.player.level)
         screen.show()
-        print "--------------------"
+        print("--------------------")
 
-        for i in range(3):
+        for i in range(len(self.subgames)):
             self.subgames[i].load_level(self.player.level)
             self.play_subgame(i)
             if self.state != d2game.GAMEPLAY:
                 return
-            print "--------------------"
+            print("--------------------")
 
         # print("Shoot bandit subgame")
         # self.player.bonus = True
@@ -93,15 +92,6 @@ class Game(d2game.game.Game):
         self.state = d2game.GAMEPLAY
 
         print("State: %s" % (self.state))
-        print "--------------------"
-
-    def play_subgame(self, index):
-        self.subgames[index].run()
-        self.state = self.subgames[index].state
-        if self.state == d2game.GAMELOOSE:
-            self.loose()
-        if self.state == d2game.GAMEWIN:
-            self.state = d2game.GAMEPLAY
         print "--------------------"
 
 

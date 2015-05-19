@@ -12,6 +12,10 @@ backgrounds:
   nextlev: res/town_big.jpg
   bounty:  res/town.png
   gui:     res/gui.png
+controls:
+  mouse:  res/mouse.png
+  drum:   res/drum.jpg
+  player: res/quickdraw.png
 sounds:
   theme: res/sounds/duel.mp3
   loose: res/sounds/loose.mp3
@@ -34,7 +38,6 @@ screens:
   shootmoney:
     sound:      False
     sleep:      2
-    showing:    True
   gui:
     background: gui
 levels:
