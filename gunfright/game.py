@@ -92,7 +92,7 @@ class Game(d2game.game.Game):
         self.state = d2game.GAMEPLAY
 
         print("State: %s" % (self.state))
-        print "--------------------"
+        print("--------------------")
 
 
 def main():

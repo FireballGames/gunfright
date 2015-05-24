@@ -84,12 +84,12 @@ class Player(d2game.player.Player):
 
         if self.pos[0] < 0:
             self.pos[0] = 0
-        if self.pos[0] > 90:
-            self.pos[0] = 90
+        if self.pos[0] > 63:
+            self.pos[0] = 63
         if self.pos[1] < 0:
             self.pos[1] = 0
-        if self.pos[1] > 90:
-            self.pos[1] = 90
+        if self.pos[1] > 63:
+            self.pos[1] = 63
 
     def seek(self, bandit):
         # dx = bandit.pos[0] - self.pos[0]

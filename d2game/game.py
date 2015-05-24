@@ -50,9 +50,6 @@ class Game(object):
         print("Playing game")
         self.state = d2game.GAMEPLAY
         while self.state == d2game.GAMEPLAY:
-            # for event in pygame.event.get():
-            #   if event.type == pygame.QUIT: self.stop()
-            #   if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: self.stop()
             self.play()
             # self.draw_bg()
             # self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
@@ -82,10 +79,10 @@ class Game(object):
         """Processs game events"""
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
-                print "QUIT"
+                print("QUIT")
                 self.loose()
             if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-                print "ESCAPE"
+                print("ESCAPE")
                 self.loose()
             self.process_event(e)
 

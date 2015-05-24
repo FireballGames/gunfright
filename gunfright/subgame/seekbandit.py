@@ -123,6 +123,7 @@ class Game(d2game.game.Game):
         pass
 
     def draw_map(self):
+        # import gui
         for i in range(len(self.map.map)):
             row = self.map.map[i]
             for j in range(len(row)):
@@ -142,6 +143,7 @@ class Game(d2game.game.Game):
             'shots':  self.player.shots,
             'lives':  self.player.lives
         })
+        self.controls['player'].pos = self.player.pos
         self.controls['player'].show()
         return
 

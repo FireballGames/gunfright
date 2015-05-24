@@ -16,6 +16,8 @@ controls:
   mouse:  res/mouse.png
   drum:   res/revolver.png
   player: res/quickdraw.png
+  ground: res/ground.png
+  grass: res/grass.png
 sounds:
   theme: res/sounds/duel.mp3
   loose: res/sounds/loose.mp3

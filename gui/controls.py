@@ -97,17 +97,61 @@ class MapPlayer():
         if "image" in config:
             self.image = gui.res.load(config["image"])
         if "pos" in config:
-            self.pos = config["pos"]
+            self.pos = [2, 2]
+            # config["pos"]
         else:
             self.pos = [0, 0]
         self.rect = self.image.get_rect()
         self.rect.x += self.pos[0] - (self.rect.width / 2)
         self.rect.y += self.pos[1] - (self.rect.height / 2)
 
+        import pygame
+        self.tiles = [gui.res.load("grass"), gui.res.load("ground")]
+        self.tile_rect = pygame.Rect((0, 0), (10, 10))
+
+        self.map_array = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+            [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+            [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ]
+
+    def tile_pos(self, *pos):
+        return ((pos[0]*64)-(pos[1]*64)+(400-64), (pos[1]*32)+(pos[0]*32))
+
     def show(self):
         print("Show player")
         import gui
+        import pygame
 
+        y = 0
+        for row in self.map_array:
+            for srow in range(0, 4):
+                x = 0
+                for p in row:
+                    for scol in range(0,4):
+                        t_r = pygame.Rect(self.tile_pos(x-self.pos[0]+2, y-self.pos[1]+2), (5, 5))
+                        if self.tiles[p] is not None:
+                            gui.gui.surface.blit(self.tiles[p], t_r)
+                        x += 1
+                y += 1
+
+        print(self.pos)
+        pos = self.tile_pos(2, 2)
+        self.rect.x = pos[0] + 48
+        self.rect.y = pos[1] + 16
         gui.gui.surface.blit(self.image, self.rect)
 
 
