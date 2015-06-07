@@ -54,24 +54,25 @@ class Pointer(pygame.sprite.Sprite):
     def intersect(self, sprites, player):
         result = pygame.sprite.spritecollide(self, sprites, dokill=True)
         if result:
-            import sound
+            from .sound import play_hit
             for sprite in result:
                 player.score += 100
-                sound.play_hit()
+                play_hit()
 
     def process_event(self, e, moneybags):
         import pygame
-        import sound
+        from .sound import play
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
             if self.in_active():
                 if self.player.shoot():
-                    sound.play('res/sounds/shot.wav')
+                    play('res/sounds/shot.wav')
                     self.intersect(moneybags, self.player)
                 else:
-                    sound.play('res/sounds/no_shot.wav')
+                    pass
+                    # play('res/sounds/no_shot.wav')
         if e.type == pygame.MOUSEBUTTONDOWN and e.button == 3:
             self.player.reload()
-            sound.play('res/sounds/reload.wav')
+            play('res/sounds/reload.wav')
 
 
 def main():

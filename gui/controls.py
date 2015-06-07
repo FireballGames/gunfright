@@ -165,7 +165,7 @@ class ControlShoot():
             'pos':  self.pos,
             'size': self.size
         }
-        print s
+        print(s)
 
 
 class ControlImageList():
@@ -190,7 +190,7 @@ class ControlImage():
             'pos':   pos,
             'image': self.image,
         }
-        print i
+        print(i)
 
 
 class ControlText():
@@ -217,7 +217,7 @@ class ControlText():
             'pos': self.pos,
             'size': self.size,
         }
-        print t
+        print(t)
 
 
 def main():

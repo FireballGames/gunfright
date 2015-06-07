@@ -31,7 +31,6 @@ screens:
     sleep:      2
   loose:
     background: loose
-    sound:      'res/sounds/loose.mp3'
     sleep:      2
   nextlev:
     background: nextlev

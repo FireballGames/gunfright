@@ -131,7 +131,7 @@ class Map():
         return room.is_wall(*in_room)
 
     def draw(self, x, y, sx, sy):
-        print "Map (%s, %s)" % (x, y)
+        print("Map (%s, %s)" % (x, y))
         x_begin = x - sx / 2
         x_end = x + sx / 2
         y_begin = y - sy / 2
@@ -158,7 +158,7 @@ class Map():
                     tile = '*'
 
                 row.append(tile)
-            print row
+            print(row)
             rows.append(row)
 
     def generate_map(self, size):

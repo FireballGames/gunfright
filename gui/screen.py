@@ -66,8 +66,8 @@ class Screen(pygame.sprite.Sprite):
 
     def play_sound(self):
         if self.sound:
-            import sound
-            sound.play(self.sound)
+            from .sound import play
+            play(self.sound)
 
     def show_image(self, window):
         window.blit(self.image, self.rect)

@@ -46,7 +46,7 @@ class PygameWin():
             self.main_theme = args['main_theme']
 
         if self.main_theme:
-            import sound
+            from .sound import init_sound
             sound.init_sound(self.main_theme)
 
     def init_window(self, **args):
@@ -61,13 +61,15 @@ class PygameWin():
             self.screen_size = args['size']
         if 'flag' in args:
             flag = args['flag']
+        title = "".join(args['title'])
+        # .encode("utf8")
 
         # Setting display mode
         self.surface = pygame.display.set_mode(self.screen_size, flag)
 
         # Other window options
         if 'title' in args:
-            pygame.display.set_caption(args['title'].encode("utf8"))
+            pygame.display.set_caption(title)
         if 'icon' in res.args():
             pygame.display.set_icon(res.load('icon', alpha=True))
         if 'show_mouse' in args:
@@ -93,7 +95,7 @@ class MainGui(screen.Screen):
         self.image.set_colorkey([255, 0, 255])
 
         global g
-        import pointer
+        from .pointer import Pointer
         self.pointer = pointer.Pointer(g.player)
 
     def blit_screen(self, window):

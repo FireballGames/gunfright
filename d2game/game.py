@@ -42,8 +42,9 @@ class Game(object):
         self.resources = d2lib.reslib.Reslib()
         gui.res = self.resources
 
-        import player
-        self.player = player.Player(params)
+        from .player import Player
+
+        self.player = Player(params)
 
     def run(self):
         """When game starts"""

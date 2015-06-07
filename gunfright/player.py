@@ -54,7 +54,7 @@ class Player(d2game.player.Player):
                     (abs(pos[1] - target.pos[1]) < delta):
                 hits.append(target)
 
-        print "Shot %s - %s" % (str(pos), len(hits))
+        print("Shot %s - %s" % (str(pos), len(hits)))
         for hit in hits:
             self.score += target.cost
             # 100

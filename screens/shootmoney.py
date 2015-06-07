@@ -133,7 +133,7 @@ def show(game):
 
     gui.g = game
 
-    print "Showing shooter"
+    print("Showing shooter")
     import config
     level_config = config.screen('shootmoney')
     level_config.update({
