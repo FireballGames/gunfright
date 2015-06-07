@@ -50,6 +50,9 @@ class PygameWin():
             sound.init_sound(self.main_theme)
 
     def init_window(self, **args):
+        import sys
+        version = sys.version_info;
+
         # Setting default values
         flag = pygame.DOUBLEBUF
 
@@ -61,8 +64,9 @@ class PygameWin():
             self.screen_size = args['size']
         if 'flag' in args:
             flag = args['flag']
-        title = "".join(args['title'])
-        # .encode("utf8")
+        title = args['title']
+        if version[0] < 3 :
+            title = title.encode("utf8")
 
         # Setting display mode
         self.surface = pygame.display.set_mode(self.screen_size, flag)
