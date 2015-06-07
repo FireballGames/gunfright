@@ -23,7 +23,7 @@
 #
 
 import pygame
-import screen
+from .screen import Screen
 
 i = None
 g = None
@@ -114,8 +114,8 @@ class MainGui(screen.Screen):
 def init_gui(config):
     global screen_data, gui
 
-    print "INIT GUI"
-    print config
+    print("INIT GUI")
+    print(config)
     screen_data = config.screens
 
     print(config.window)
