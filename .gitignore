@@ -1,4 +1,4 @@
 *.pyc
-tmp/
 *.geany
 isometric/
+*.log
