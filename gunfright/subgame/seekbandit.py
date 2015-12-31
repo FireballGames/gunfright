@@ -86,7 +86,6 @@ class Game(d2game.game.Game):
 
         d2game.game.Game.play(self)
 
-        print("Seek")
         bandit = None
         find = self.player.seek(bandit)
 
@@ -123,7 +122,7 @@ class Game(d2game.game.Game):
         pass
 
     def draw_map(self):
-        # import gui
+        # draw_map(player.pos[0], player.pos[1], 8, 8)
         for i in range(len(self.map.map)):
             row = self.map.map[i]
             for j in range(len(row)):
@@ -134,18 +133,23 @@ class Game(d2game.game.Game):
         pass
 
     def draw(self):
-        # draw_map(player.pos[0], player.pos[1], 8, 8)
-        print(self.map)
-        self.draw_map()
+        # self.draw_map()
+        self.controls['player'].pos = self.player.pos
+        self.controls['player'].show()
+
+    def draw_controls(self):
         print({
             'player': self.player.pos,
             'score':  self.player.score,
             'shots':  self.player.shots,
             'lives':  self.player.lives
         })
-        self.controls['player'].pos = self.player.pos
-        self.controls['player'].show()
         return
+
+    def move_and_draw(self, *params):
+        print(self.map)
+        self.player.move(*params)
+        self.draw_controls()
 
     def process_events(self):
         d2game.game.Game.process_events(self)
@@ -154,13 +158,13 @@ class Game(d2game.game.Game):
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
-            self.player.move(0, -1)
-        elif keys[pygame.K_DOWN]:
-            self.player.move(0, 1)
-        elif keys[pygame.K_LEFT]:
-            self.player.move(-1, 0)
-        elif keys[pygame.K_RIGHT]:
-            self.player.move(1, 0)
+            self.move_and_draw(0, -1)
+        if keys[pygame.K_DOWN]:
+            self.move_and_draw(0, 1)
+        if keys[pygame.K_LEFT]:
+            self.move_and_draw(-1, 0)
+        if keys[pygame.K_RIGHT]:
+            self.move_and_draw(1, 0)
 
 
 def main():
