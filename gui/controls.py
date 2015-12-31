@@ -141,7 +141,7 @@ class MapPlayer():
             for srow in range(0, 4):
                 x = 0
                 for p in row:
-                    for scol in range(0,4):
+                    for scol in range(0, 4):
                         t_r = pygame.Rect(self.tile_pos(x-self.pos[0]+2, y-self.pos[1]+2), (5, 5))
                         if self.tiles[p] is not None:
                             gui.gui.surface.blit(self.tiles[p], t_r)
