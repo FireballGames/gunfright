@@ -28,13 +28,22 @@ from gunfright.game import Game
 
 
 def main():
+    import logging
 
-    print("-----------------------------------------------------------")
-    print("Loading game configuration")
+    log = {
+        # "filename": "gunfright.log",
+        "format": "%(levelname) -8s [%(asctime)s] %(message)s",
+        "level": logging.DEBUG,
+    }
+
+    logging.basicConfig(**log)
+
+    logging.info("Starting Gunfright!")
+    logging.debug("Loading game configuration")
+
     mygame = Game(config.load('game.yml'))
     mygame.run()
     mygame.quit()
-    print("-----------------------------------------------------------")
 
 if __name__ == '__main__':
     main()

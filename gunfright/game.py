@@ -21,15 +21,45 @@
 #  MA 02110-1301, USA.
 #
 #
-
+""" Gunfright game globals
+"""
 
 import d2game.game
+import logging
+
 import gui
 import gui.controls
+
+class d2UI(d2game.game.UI):
+    def __init__(self, game, config):
+        self.game = game
+        self.config = config
+
+        gui.init_gui(self.config)
+        gui.controls.Splash(self.config.screen('intro')).show()
+        gui.init_game(self.game)
+
+    def win(self):
+        gui.win()
+
+    def loose(self):
+        gui.loose()
+        self.game.quit()
+
+    def next_level(self):
+        screen = gui.controls.Splash(self.config.screen('nextlev'))
+        screen.controls["text"] = gui.controls.ControlText(
+            "Level %s",
+            pos = (100, 100),
+            size = 32,
+        )
+        screen.controls["text"].prepare(self.game.player.level)
+        screen.show()
+
+
 import gunfright.player
 import gunfright.subgame.bountyshooter
 import gunfright.subgame.seekbandit
-
 
 class Game(d2game.game.Game):
 
@@ -37,66 +67,51 @@ class Game(d2game.game.Game):
         d2game.game.Game.__init__(self, params)
 
         self.player = gunfright.player.Player(self.config)
-
-        gui.init_gui(self.config)
-        gui.controls.Splash(self.config.screen('intro')).show()
-        gui.init_game(self)
+        self.ui = d2UI(self, self.config)
 
         self.subgames = [
-            gunfright.subgame.bountyshooter.Game(self.player, self.config),
+            # gunfright.subgame.bountyshooter.Game(self.player, self.config),
             gunfright.subgame.seekbandit.Game(self.player, self.config),
             gunfright.subgame.bountyshooter.Game(self.player, self.config)
         ]
 
     def win(self):
         d2game.game.Game.win(self)
-        gui.win()
-
-    def loose(self):
-        d2game.game.Game.loose(self)
-        gui.loose()
-        self.quit()
+        self.player.levelup()
+        self.state = d2game.GAMEPLAY
 
     def play(self):
         d2game.game.Game.play(self)
 
-        print("Running the game")
-        print("Next level screen")
-        screen = gui.controls.Splash(self.config.screen('nextlev'))
-        screen.controls["text"] = gui.controls.ControlText(
-            "Level %s",
-            pos = (100, 100),
-            size = 32,
-        )
-        screen.controls["text"].prepare(self.player.level)
-        screen.show()
-        print("--------------------")
+        logging.info("Running the game")
 
+        self.next_level()
         for i in range(len(self.subgames)):
             self.subgames[i].load_level(self.player.level)
             self.play_subgame(i)
             if self.state != d2game.GAMEPLAY:
                 return
-            print("--------------------")
+            logging.debug("Next subgame")
+        self.shoot_bandit()
+        self.win()
 
-        # print("Shoot bandit subgame")
+        logging.debug("State: %s" % (self.state))
+        logging.debug("--------------------")
+
+    def next_level(self):
+        logging.debug("Next level screen")
+        self.ui.next_level()
+
+    def shoot_bandit(self):
+        logging.debug("Shoot bandit subgame")
         # self.player.bonus = True
         # self.subgames[2].load_level(self.player.level)
         # self.play_subgame(2)
-        # if self.state != d2game.GAMEPLAY:
-        #    return
-        # print "--------------------"
-
-        self.win()
-        self.player.levelup()
-        self.state = d2game.GAMEPLAY
-
-        print("State: %s" % (self.state))
-        print("--------------------")
+        if self.state != d2game.GAMEPLAY:
+           return
 
 
 def main():
-    print("Gunfright game globals")
     return 0
 
 if __name__ == '__main__':

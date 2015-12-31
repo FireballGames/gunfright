@@ -21,25 +21,45 @@
 #  MA 02110-1301, USA.
 #
 #
+""" Basic game module
+"""
 
 
 import d2game
+import logging
 import pygame
+
+
+class UI(object):
+    def win(self):
+        logging.debug("Win game")
+
+    def loose(self):
+        logging.debug("Loose game")
+
+    def stop(self):
+        logging.debug("Stop game")
+
+    def quit(self):
+        logging.debug("Quit game")
 
 
 class Game(object):
 
     def __init__(self, params):
-        print("Initialization game")
+        logging.info("Initialization game")
+
+        import d2lib.reslib
+
         self.config = params
+        self.resources = d2lib.reslib.Reslib()
+        self.ui = None
         self.state = d2game.GAMEOVER
         self.subgames = []
 
         import gui
-        # self.window    = sdl_window.SDLwindow(self.screen)
 
-        import d2lib.reslib
-        self.resources = d2lib.reslib.Reslib()
+        # self.window    = sdl_window.SDLwindow(self.screen)
         gui.res = self.resources
 
         from .player import Player
@@ -48,7 +68,7 @@ class Game(object):
 
     def run(self):
         """When game starts"""
-        print("Playing game")
+        logging.info("Running game")
         self.state = d2game.GAMEPLAY
         while self.state == d2game.GAMEPLAY:
             self.play()
@@ -93,28 +113,36 @@ class Game(object):
 
     def win(self):
         """When player wins the game"""
-        print('You win')
+        logging.info('Player win')
         self.state = d2game.GAMEWIN
+        if self.ui is not None:
+            self.ui.win()
 
     def loose(self):
         """When player looses the game"""
-        print('You loose')
+        logging.info('Player loose')
         self.state = d2game.GAMELOOSE
+        if self.ui is not None:
+            self.ui.loose()
 
     def end(self):
         """When player stops the game"""
-        print('Player stop')
+        logging.info('Player stops')
+        if self.ui is not None:
+            self.ui.stop()
         self.loose()
 
     def quit(self):
         """When player quits from the game"""
+        logging.info('Player quits')
+        if self.ui is not None:
+            self.ui.quit()
         import sys
 
         sys.exit(0)
 
 
 def main():
-    print("Basic game module")
     return 0
 
 if __name__ == '__main__':

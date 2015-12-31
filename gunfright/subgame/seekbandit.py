@@ -21,23 +21,29 @@
 #  MA 02110-1301, USA.
 #
 #
+""" Seekbandit subgaME
+"""
 
+
+import logging
 
 import d2game.game
 import d2game.map
 
 
 class Game(d2game.game.Game):
+    DIR_UP = (0, -1)
+    DIR_DOWN = (0, 1)
+    DIR_LEFT = (-1, 0)
+    DIR_RIGHT = (1, 0)
 
     def __init__(self, player, params):
         d2game.game.Game.__init__(self, params)
 
-        print("Seek bandit subgame")
-        # self.player = MyPlayer()
-        self.player = player
+        logging.info("Seek bandit subgame")
 
+        self.player = player
         self.map = d2game.map.Map((16, 16))
-        # self.map = []
 
         import gui
         self.controls = {
@@ -72,7 +78,7 @@ class Game(d2game.game.Game):
         self.gui = gui.res.load("gui")
 
     def run(self):
-        print("Running bandit seeker")
+        logging.debug("Running bandit seeker")
 
         import gui
         gui.g = self
@@ -87,17 +93,15 @@ class Game(d2game.game.Game):
         d2game.game.Game.play(self)
 
         bandit = None
-        find = self.player.seek(bandit)
+        if self.player.seek(bandit):
+            self.win()
+            return
 
         self.draw()
 
         import pygame
         pygame.display.flip()
         pygame.time.delay(2)
-
-        if find:
-            self.win()
-            # self.state = d2game.GAMEWIN
 
     def load_level(self, level):
         import config
@@ -108,7 +112,6 @@ class Game(d2game.game.Game):
         self.player.pos = [len(self.map.map)/2, len(self.map.map[0])/2]
         # global people, bandit
         # bandit = People(random.randrange(size_x*5), random.randrange(size_y*5))
-        pass
 
     def move_objects(self):
         # global people, bandit
@@ -138,7 +141,7 @@ class Game(d2game.game.Game):
         self.controls['player'].show()
 
     def draw_controls(self):
-        print({
+        logging.debug({
             'player': self.player.pos,
             'score':  self.player.score,
             'shots':  self.player.shots,
@@ -146,9 +149,9 @@ class Game(d2game.game.Game):
         })
         return
 
-    def move_and_draw(self, *params):
-        print(self.map)
-        self.player.move(*params)
+    def move_and_draw(self, *direction):
+        logging.debug(self.map)
+        self.player.move(*direction)
         self.draw_controls()
 
     def process_events(self):
@@ -158,17 +161,16 @@ class Game(d2game.game.Game):
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
-            self.move_and_draw(0, -1)
+            self.move_and_draw(*self.DIR_UP)
         if keys[pygame.K_DOWN]:
-            self.move_and_draw(0, 1)
+            self.move_and_draw(*self.DIR_DOWN)
         if keys[pygame.K_LEFT]:
-            self.move_and_draw(-1, 0)
+            self.move_and_draw(*self.DIR_LEFT)
         if keys[pygame.K_RIGHT]:
-            self.move_and_draw(1, 0)
+            self.move_and_draw(*self.DIR_RIGHT)
 
 
 def main():
-    print("Gunfright game globals")
     return 0
 
 if __name__ == '__main__':
