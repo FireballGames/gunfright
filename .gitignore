@@ -2,3 +2,4 @@
 *.geany
 isometric/
 *.log
+venv/
