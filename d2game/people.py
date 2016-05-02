@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  game.py
+#  map.py
 #
 #  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
 #
@@ -23,29 +23,37 @@
 #
 
 
-class Player():
-    def __init__(self):
-        self.images = None
-        self.speed = 1
+class People():
+    def __init__(self, x, y):
+        self.pos = [x, y]
+        self.dir = 0
+        self.size_x = 16
+        self.size_y = 16
 
-        self.collisions = []
+    def move(self, d):
+        global size_x, size_y
 
-    def move(self, *coords):
-        """Move player by coords"""
-        self.images.animate = True
-        newpos = [
-            self.images.pos[0],
-            self.images.pos[1]
-        ]
-        for i in range(len(coords)):
-            newpos[i] += coords[i]*self.speed
-        for c in self.collisions:
-            if c.collision(newpos, self.images):
-                return
-        self.images.pos = newpos
+        self.diri = d
+        if d == 0:
+            m = (1, 0)
+        if d == 1:
+            m = (0, 1)
+        if d == 2:
+            m = (-1, 0)
+        if d == 3:
+            m = (0, -1)
 
-    def draw(self):
-        # print self.images.animate
-        image = self.images.draw()
-        self.images.animate = False
-        return image
+        n = [self.pos[0]+m[0], self.pos[1]+m[1]]
+
+        if n[0] < 0:
+            n[0] = 0
+        if n[0] >= self.size_x*5:
+            n[0] = self.size_x*5-1
+        if n[1] < 0:
+            n[1] = 0
+        if n[1] >= self.size_y*5:
+            n[1] = self.size_y*5-1
+
+        t = self.map.get_tile(n[0], n[1])
+
+        self.pos = n

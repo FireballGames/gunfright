@@ -32,10 +32,6 @@ import d2game.map
 
 
 class Game(d2game.game.Game):
-    DIR_UP = (0, -1)
-    DIR_DOWN = (0, 1)
-    DIR_LEFT = (-1, 0)
-    DIR_RIGHT = (1, 0)
 
     def __init__(self, player, params):
         d2game.game.Game.__init__(self, params)
@@ -44,6 +40,7 @@ class Game(d2game.game.Game):
 
         self.player = player
         self.map = d2game.map.Map((16, 16))
+        logging.debug(self.player.pos)
 
         import gui
         self.controls = {
@@ -71,7 +68,8 @@ class Game(d2game.game.Game):
             ),
             'player': gui.controls.MapPlayer({
                 "pos": [400, 300],
-                "image": "player"
+                "image": "player",
+                "map": self.map,
             })
         }
         self.screen = None
@@ -109,7 +107,7 @@ class Game(d2game.game.Game):
         level_data = config.level(level)
 
         self.map.generate_map((16, 16))
-        self.player.pos = [len(self.map.map)/2, len(self.map.map[0])/2]
+        self.player.pos = [len(self.map.map_array)/2 - 2, len(self.map.map_array[0])/2 + 2]
         # global people, bandit
         # bandit = People(random.randrange(size_x*5), random.randrange(size_y*5))
 
@@ -149,9 +147,8 @@ class Game(d2game.game.Game):
         })
         return
 
-    def move_and_draw(self, *direction):
-        logging.debug(self.map)
-        self.player.move(*direction)
+    def move_and_draw(self, direction):
+        self.player.move(direction, self.map)
         self.draw_controls()
 
     def process_events(self):
@@ -161,13 +158,13 @@ class Game(d2game.game.Game):
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
-            self.move_and_draw(*self.DIR_UP)
+            self.move_and_draw(d2game.map.DIR_UP)
         if keys[pygame.K_DOWN]:
-            self.move_and_draw(*self.DIR_DOWN)
+            self.move_and_draw(d2game.map.DIR_DOWN)
         if keys[pygame.K_LEFT]:
-            self.move_and_draw(*self.DIR_LEFT)
+            self.move_and_draw(d2game.map.DIR_LEFT)
         if keys[pygame.K_RIGHT]:
-            self.move_and_draw(*self.DIR_RIGHT)
+            self.move_and_draw(d2game.map.DIR_RIGHT)
 
 
 def main():

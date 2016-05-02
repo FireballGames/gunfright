@@ -23,6 +23,9 @@
 #
 
 
+import logging
+
+
 class Splash():
     def __init__(self, config):
         import gui
@@ -106,24 +109,36 @@ class MapPlayer():
         self.tiles = [gui.res.load("grass"), gui.res.load("ground")]
         self.tile_rect = pygame.Rect((0, 0), (10, 10))
 
-        self.map_array = [
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
-            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
-            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
-            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
-            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        ]
+        if "map" in config:
+            self.map = config["map"]
+            self.map_array = self.map.map_array
+        else:
+            map_tpl = [
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+                [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+                [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+                [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+                [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+                [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+                [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1],
+                [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                [1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            ]
+            self.map_array = []
+            for row in map_tpl:
+                map_row = []
+                for p in row:
+                    for scol in range(4):
+                        map_row.append(p)
+                for srow in range(4):
+                    self.map_array.append(map_row)
 
         self.rect = self.image.get_rect()
         self.rect.x += self.pos[0] - (self.rect.width / 2)
@@ -147,20 +162,19 @@ class MapPlayer():
         player_size = (32, 0)
         y = 0
         for row in self.map_array:
-            for srow in range(0, 4):
-                x = 0
-                for p in row:
-                    for scol in range(0, 4):
-                        t_r = pygame.Rect(self.tile_pos(
-                                x - self.pos[0] + pos0[0],
-                                y - self.pos[1] + pos0[1]
-                            ),
-                            tile_size
-                        )
-                        if self.tiles[p] is not None:
-                            gui.gui.surface.blit(self.tiles[p], t_r)
-                        x += 1
-                y += 1
+            x = 0
+            for p in row:
+                t_r = pygame.Rect(self.tile_pos(
+                        x - self.pos[0] + pos0[0],
+                        y - self.pos[1] + pos0[1]
+                    ),
+                    tile_size
+                )
+                t = p.tile
+                if self.tiles[t] is not None:
+                    gui.gui.surface.blit(self.tiles[t], t_r)
+                x += 1
+            y += 1
 
         pos = self.tile_pos(*player_pos0)  # (2, 2)
         self.rect.x = pos[0] + (tile_size[0] + player_size[0]) / 2
@@ -216,7 +230,6 @@ class ControlText():
         self.text = ""
 
         import pygame
-
         self.font = pygame.font.Font(self.family, self.size)
 
     def prepare(self, *vars):

@@ -22,6 +22,7 @@
 #
 #
 
+import logging
 import d2game.player
 
 
@@ -76,20 +77,26 @@ class Player(d2game.player.Player):
         print("Chance %s vs %s" % (chance, 50))
         self.bonus = chance < 50
 
-    def move(self, *dir):
+    def move(self, dir, map):
+        logging.debug("Move event from %s to %s" % (self.pos, dir))
+        logging.debug(map)
+
         self.dir = dir
 
-        self.pos[0] += dir[0]
-        self.pos[1] += dir[1]
+        new_pos = map.pos_dir(self.pos, self.dir)
+        logging.debug("New position will be at: %s" % (new_pos))
 
-        if self.pos[0] < 0:
-            self.pos[0] = 0
-        if self.pos[0] > 63:
-            self.pos[0] = 63
-        if self.pos[1] < 0:
-            self.pos[1] = 0
-        if self.pos[1] > 63:
-            self.pos[1] = 63
+        logging.debug(new_pos)
+        logging.debug("Before can go: %s" % (self.pos))
+        if map.can_go(self.pos, self.dir):
+            self.pos = new_pos
+        else:
+            logging.debug("Can't go")
+        logging.debug("Final position: %s" % (self.pos))
+
+        self.pos = map.patch_constraints(self.pos)
+        logging.debug("After patch: %s" % (self.pos))
+        logging.debug(map.map_array[self.pos[0]][self.pos[1]].tile)
 
     def seek(self, bandit):
         # dx = bandit.pos[0] - self.pos[0]
