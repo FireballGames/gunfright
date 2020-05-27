@@ -23,7 +23,7 @@
 #
 
 import pygame
-import config
+from config import Config
 
 
 class Reslib():
@@ -32,7 +32,7 @@ class Reslib():
 
         self.images = {}
 
-        c = config.config()
+        c = Config.config()
         for key in c.backgrounds.keys():
             self.images[key] = pygame.image.load(c.backgrounds[key])
         for key in c.controls.keys():

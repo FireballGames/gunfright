@@ -1,17 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import config
+from config import Config
 from gunfright.game import Game
 from log import logger
 
 
-def main():
-    logger.info("Starting Gunfright!")
-    logger.debug("Loading game configuration")
+CONFIG_FILE = 'game.yml'
 
-    game = Game(config.load('game.yml'))
+
+def main():
+    logger.info("Loading config...")
+    config = Config()
+    config.load_from_file(CONFIG_FILE)
+
+    logger.info("Starting Game...")
+    game = Game(config)
+
+    logger.info("Running Game...")
     game.run()
+
+    logger.info("Quiting game...")
     game.quit()
+
+    logger.info("Bye!")
 
 
 if __name__ == '__main__':

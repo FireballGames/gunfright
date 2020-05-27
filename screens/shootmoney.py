@@ -26,7 +26,7 @@ import pygame
 import random
 import gui
 import d2game
-
+from config import Config
 
 class Moneybag(pygame.sprite.Sprite):
     ticks = -1
@@ -134,8 +134,7 @@ def show(game):
     gui.g = game
 
     print("Showing shooter")
-    import config
-    level_config = config.screen('shootmoney')
+    level_config = Config.get_screen('shootmoney')
     level_config.update({
         'background': game.level.background,
         'interface':  gui.i

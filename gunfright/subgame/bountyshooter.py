@@ -25,6 +25,7 @@
 
 import d2game.game
 import gui.controls
+from config import Config
 
 
 class Game(d2game.game.Game):
@@ -93,10 +94,9 @@ class Game(d2game.game.Game):
     def load_level(self, level):
         print("Loading level %s" % (level))
 
-        import config
         import gunfright.level
-        level_data = config.level(level)
-        level_screen = config.screen('shootmoney')
+        level_data = Config.level(level)
+        level_screen = Config.get_screen('shootmoney')
         level_screen.update({
             'background': level_data["background"],
             'interface':  gui.i

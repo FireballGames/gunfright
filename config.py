@@ -1,38 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-#  config.py
-#
-#  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
+import yaml
+from log import logger
 
 
-class Config():
+class Config:
+    __instance = None
     __params = {}
 
-    def __init__(self, filename = False):
-        self.load(filename)
-
-    def load(self, filename = False):
-        if filename:
-            import yaml
-            self.__params.update(yaml.load(open(filename, 'r')))
+    def __init__(self):
+        pass
 
     def __getitem__(self, key):
         if key in self.__params:
@@ -49,48 +26,45 @@ class Config():
     def __str__(self):
         return str(self.__params)
 
+    def update(self, **params):
+        self.__params.update(params)
+
     def screen(self, index):
         return self.screens[index]
 
+    @classmethod
+    def config(cls):
+        if cls.__instance is None:
+            cls.__instance = cls()
+        return cls.__instance
 
-__config = Config()
+    @classmethod
+    def load_from_file(cls, filename=None):
+        if filename:
+            logger.debug("Loading config from \"%s\"...", filename)
+            with open(filename, 'r') as f:
+                data = yaml.load(f)
+                cls.config().update(**data)
+
+    @classmethod
+    def level(cls, index):
+        levels = cls.__instance.levels
+        if index in levels:
+            return levels[index]
+        else:
+            return levels[-1]
+
+    @classmethod
+    def get_map(cls):
+        return [
+            [1, 1, 2],
+            [1, 2, 3],
+            [2, 3, 3]
+        ]
+
+    @classmethod
+    def get_screen(cls, index):
+        return cls.config().screen(index)
 
 
-def level(index):
-    global __config
-    levels = __config.levels
-    if index in levels:
-        return levels[index]
-    else:
-        return levels[-1]
-
-
-def map():
-    return [
-        [1, 1, 2],
-        [1, 2, 3],
-        [2, 3, 3]
-    ]
-
-
-def config():
-    global __config
-    return __config
-
-
-def load(filename):
-    global __config
-    __config.load(filename)
-    return __config
-
-
-def screen(index):
-    return __config.screen(index)
-
-
-def main():
-    global __config
-    return __config
-
-if __name__ == '__main__':
-    main()
+CONFIG = Config()

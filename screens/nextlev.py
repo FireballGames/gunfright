@@ -23,6 +23,8 @@
 #  
 
 import gui
+from config import Config
+
 g = 0
 
 class NextLev(gui.screen.Screen):
@@ -39,9 +41,8 @@ def show(game):
     global g
     g = game
     
-    print "Showing next level"
-    import config
-    screen = NextLev(**config.screen('nextlev'))
+    print("Showing next level")
+    screen = NextLev(**Config.get_screen('nextlev'))
     screen.show_screen(gui.gui.surface)
 
 def main():

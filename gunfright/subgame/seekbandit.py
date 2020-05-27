@@ -29,6 +29,7 @@ import logging
 
 import d2game.game
 import d2game.map
+from config import Config
 
 
 class Game(d2game.game.Game):
@@ -102,9 +103,8 @@ class Game(d2game.game.Game):
         pygame.time.delay(2)
 
     def load_level(self, level):
-        import config
         # import gunfright.level
-        level_data = config.level(level)
+        level_data = Config.level(level)
 
         self.map.generate_map((16, 16))
         self.player.pos = [len(self.map.map_array)/2 - 2, len(self.map.map_array[0])/2 + 2]
