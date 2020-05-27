@@ -1,0 +1,4 @@
+GAME_OVER = 0
+PLAY = 1
+WIN = 2
+LOOSE = 3

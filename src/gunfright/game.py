@@ -4,7 +4,7 @@ Gunfright game globals
 import gui
 import gui.controls
 
-from d2game import GAMEPLAY
+from d2game import states
 from d2game.game import Game, UI
 from log import logger
 from .minigames.bountyshooter import BountyShooter
@@ -40,8 +40,8 @@ class D2UI(UI):
 
 
 class Gunfright(Game):
-    def __init__(self, params):
-        super().__init__(params)
+    def __init__(self, config):
+        super().__init__(config)
 
         self.player = Player(self.config)
         self.ui = D2UI(self, self.config)
@@ -52,25 +52,25 @@ class Gunfright(Game):
             BountyShooter(self.player, self.config)
         ]
 
-    def win(self):
-        super().win()
+    def on_win(self):
+        super().on_win()
         self.player.levelup()
-        self.state = GAMEPLAY
+        self.state = states.PLAY
 
-    def play(self):
-        super().play()
+    def on_play(self):
+        super().on_play()
 
         logger.info("Running the game")
 
         self.next_level()
         for i in range(len(self.subgames)):
             self.subgames[i].load_level(self.player.level)
-            self.play_subgame(i)
-            if self.state != GAMEPLAY:
+            self.play_mini_game(i)
+            if self.state != states.PLAY:
                 return
             logger.debug("Next minigames")
         self.shoot_bandit()
-        self.win()
+        self.set_state(states.WIN)
 
         logger.debug("State: %s", self.state)
         logger.debug("--------------------")
@@ -84,5 +84,5 @@ class Gunfright(Game):
         # self.player.bonus = True
         # self.subgames[2].load_level(self.player.level)
         # self.play_subgame(2)
-        if self.state != GAMEPLAY:
+        if self.state != states.PLAY:
            return

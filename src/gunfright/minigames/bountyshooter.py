@@ -3,13 +3,14 @@ import gui
 import gui.controls
 import screens.shootmoney
 from config import Config
+from d2game import states
 from d2game.game import Game
 from ..level import ShootBounty
 
 
 class BountyShooter(Game):
-    def __init__(self, player, params):
-        super().__init__(params)
+    def __init__(self, player, config):
+        super().__init__(config)
 
         print("Shoot money minigames")
         self.player = player
@@ -46,10 +47,10 @@ class BountyShooter(Game):
 
         self.player.bonus = False
 
-    def play(self):
+    def on_play(self):
         gui.gui.clear()
 
-        super().play()
+        super().on_play()
 
         self.screen.show_image(gui.gui.surface)
 
@@ -58,7 +59,7 @@ class BountyShooter(Game):
         # self.screen.show_screen(gui.gui.surface)
 
         if not self.screen.showing:
-            self.win()
+            self.set_state(states.WIN)
 
     def process_event(self, event):
         super().process_event(event)

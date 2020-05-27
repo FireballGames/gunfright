@@ -5,14 +5,15 @@ import pygame
 import d2game.map
 import gui
 from config import Config
+from d2game import states
 from d2game.game import Game
 from log import logger
 # from ..level import ShootBounty
 
 
 class SeekBandit(Game):
-    def __init__(self, player, params):
-        super().__init__(params)
+    def __init__(self, player, config):
+        super().__init__(config)
 
         logger.info("Seek bandit minigames")
 
@@ -58,16 +59,16 @@ class SeekBandit(Game):
         gui.g = self
 
         self.load_level(self.player.level)
-        d2game.game.Game.run(self)
+        super().run()
 
-    def play(self):
+    def on_play(self):
         gui.gui.clear()
 
-        d2game.game.Game.play(self)
+        super().on_play()
 
         bandit = None
         if self.player.seek(bandit):
-            self.win()
+            self.set_state(states.WIN)
             return
 
         self.draw()
