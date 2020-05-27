@@ -1,35 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-#  player.py
-#
-#  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
-
-import logging
-import d2game.player
+from d2game import player
+from log import logger
 
 
-class Player(d2game.player.Player):
+class Player(player.Player):
 
     def __init__(self, config):
-        d2game.player.Player.__init__(self, config)
+        super().__init__(config)
         self.score = 250
         self.shots = 6
         self.lives = 5
@@ -45,7 +21,7 @@ class Player(d2game.player.Player):
         else:
             return False
 
-    def hit_targets(self, pos=(0, 0), targets=[], delta=10):
+    def hit_targets(self, pos=(0, 0), targets=(), delta=10):
         if not self.shoot():
             return False
 
@@ -70,7 +46,7 @@ class Player(d2game.player.Player):
             self.shots = 6
 
     def levelup(self):
-        d2game.player.Player.levelup(self)
+        super().levelup()
 
         import random
         chance = random.randrange(100)
@@ -78,25 +54,25 @@ class Player(d2game.player.Player):
         self.bonus = chance < 50
 
     def move(self, dir, map):
-        logging.debug("Move event from %s to %s" % (self.pos, dir))
-        logging.debug(map)
+        logger.debug("Move event from %s to %s" % (self.pos, dir))
+        logger.debug(map)
 
         self.dir = dir
 
         new_pos = map.pos_dir(self.pos, self.dir)
-        logging.debug("New position will be at: %s" % (new_pos))
+        logger.debug("New position will be at: %s" % (new_pos))
 
-        logging.debug(new_pos)
-        logging.debug("Before can go: %s" % (self.pos))
+        logger.debug(new_pos)
+        logger.debug("Before can go: %s" % (self.pos))
         if map.can_go(self.pos, self.dir):
             self.pos = new_pos
         else:
-            logging.debug("Can't go")
-        logging.debug("Final position: %s" % (self.pos))
+            logger.debug("Can't go")
+        logger.debug("Final position: %s" % (self.pos))
 
         self.pos = map.patch_constraints(self.pos)
-        logging.debug("After patch: %s" % (self.pos))
-        logging.debug(map.map_array[self.pos[0]][self.pos[1]].tile)
+        logger.debug("After patch: %s" % (self.pos))
+        logger.debug(map.map_array[self.pos[0]][self.pos[1]].tile)
 
     def seek(self, bandit):
         # dx = bandit.pos[0] - self.pos[0]
@@ -127,10 +103,3 @@ class Player(d2game.player.Player):
     def loose(self):
         self.lives -= 1
         return False
-
-
-def main():
-    return 0
-
-if __name__ == '__main__':
-    main()

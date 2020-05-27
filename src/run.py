@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from config import Config
-from gunfright.game import Game
+from gunfright.game import Gunfright
 from log import logger
 
 
@@ -14,7 +14,7 @@ def main():
     config.load_from_file(CONFIG_FILE)
 
     logger.info("Starting Game...")
-    game = Game(config)
+    game = Gunfright(config)
 
     logger.info("Running Game...")
     game.run()

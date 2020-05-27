@@ -1,49 +1,25 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-#  seekbandit.py
-#
-#  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
-""" Seekbandit subgaME
 """
-
-
-import logging
-
-import d2game.game
+Seek bandit minigames
+"""
+import pygame
 import d2game.map
+import gui
 from config import Config
+from d2game.game import Game
+from log import logger
+# from ..level import ShootBounty
 
 
-class Game(d2game.game.Game):
-
+class SeekBandit(Game):
     def __init__(self, player, params):
-        d2game.game.Game.__init__(self, params)
+        super().__init__(params)
 
-        logging.info("Seek bandit subgame")
+        logger.info("Seek bandit minigames")
 
         self.player = player
         self.map = d2game.map.Map((16, 16))
-        logging.debug(self.player.pos)
+        logger.debug(self.player.pos)
 
-        import gui
         self.controls = {
             'main': gui.controls.ControlShoot(
                 pos = (1, 1),
@@ -77,16 +53,14 @@ class Game(d2game.game.Game):
         self.gui = gui.res.load("gui")
 
     def run(self):
-        logging.debug("Running bandit seeker")
+        logger.debug("Running bandit seeker")
 
-        import gui
         gui.g = self
 
         self.load_level(self.player.level)
         d2game.game.Game.run(self)
 
     def play(self):
-        import gui
         gui.gui.clear()
 
         d2game.game.Game.play(self)
@@ -98,12 +72,10 @@ class Game(d2game.game.Game):
 
         self.draw()
 
-        import pygame
         pygame.display.flip()
         pygame.time.delay(2)
 
     def load_level(self, level):
-        # import gunfright.level
         level_data = Config.level(level)
 
         self.map.generate_map((16, 16))
@@ -139,7 +111,7 @@ class Game(d2game.game.Game):
         self.controls['player'].show()
 
     def draw_controls(self):
-        logging.debug({
+        logger.debug({
             'player': self.player.pos,
             'score':  self.player.score,
             'shots':  self.player.shots,
@@ -154,8 +126,6 @@ class Game(d2game.game.Game):
     def process_events(self):
         d2game.game.Game.process_events(self)
 
-        import pygame
-
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.move_and_draw(d2game.map.DIR_UP)
@@ -165,10 +135,3 @@ class Game(d2game.game.Game):
             self.move_and_draw(d2game.map.DIR_LEFT)
         if keys[pygame.K_RIGHT]:
             self.move_and_draw(d2game.map.DIR_RIGHT)
-
-
-def main():
-    return 0
-
-if __name__ == '__main__':
-    main()
