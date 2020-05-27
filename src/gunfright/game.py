@@ -1,61 +1,39 @@
 """
 Gunfright game globals
 """
-import gui
-import gui.controls
-
 from d2game import states
-from d2game.game import Game, UI
+from d2game.game import Game
 from log import logger
-from .minigames.bountyshooter import BountyShooter
-from .minigames.seekbandit import SeekBandit
-from .player import Player
-
-
-class D2UI(UI):
-    def __init__(self, current_game, config):
-        self.game = current_game
-        self.config = config
-
-        gui.init_gui(self.config)
-        gui.controls.Splash(self.config.screen('intro')).show()
-        gui.init_game(self.game)
-
-    def win(self):
-        gui.win()
-
-    def loose(self):
-        gui.loose()
-        self.game.quit()
-
-    def next_level(self):
-        screen = gui.controls.Splash(self.config.screen('nextlev'))
-        screen.controls["text"] = gui.controls.ControlText(
-            "Level %s",
-            pos=(100, 100),
-            size=32,
-        )
-        screen.controls["text"].prepare(self.game.player.level)
-        screen.show()
+# from .minigames.simple import Simple
+# from .minigames.bountyshooter import BountyShooter
+# from .minigames.seekbandit import SeekBandit
+# from .player import Player
+from .ui import UI
 
 
 class Gunfright(Game):
     def __init__(self, config):
         super().__init__(config)
 
-        self.player = Player(self.config)
-        self.ui = D2UI(self, self.config)
+        # self.player = Player(self.config)
 
-        self.subgames = [
-            # BountyShooter(self.player, self.config),
-            SeekBandit(self.player, self.config),
-            BountyShooter(self.player, self.config)
-        ]
+        self.__ui = UI(self.config)
+
+    @property
+    def ui(self):
+        return self.__ui
+
+    def mini_games(self):
+        # yield Simple(self.player, self.config)
+        yield from []
+        # yield BountyShooter(self.player, self.config),
+        # yield SeekBandit(self.player, self.config),
+        # yield BountyShooter(self.player, self.config)
 
     def on_win(self):
         super().on_win()
-        self.player.levelup()
-        self.state = states.PLAY
+        # self.player.levelup()
+        # self.state = states.PLAY
 
     def on_play(self):
         super().on_play()
@@ -63,12 +41,12 @@ class Gunfright(Game):
         logger.info("Running the game")
 
         self.next_level()
-        for i in range(len(self.subgames)):
-            self.subgames[i].load_level(self.player.level)
-            self.play_mini_game(i)
+        for game in self.mini_games():
+            # game.load_level(self.player.level)
+            self.play_mini_game(game)
             if self.state != states.PLAY:
                 return
-            logger.debug("Next minigames")
+            logger.debug("Next mini game")
         self.shoot_bandit()
         self.set_state(states.WIN)
 

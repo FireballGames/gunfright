@@ -1,7 +1,6 @@
 """
 Basic game module
 """
-import pygame
 import d2lib.reslib
 import gui
 from log import logger
@@ -10,17 +9,17 @@ from .player import Player
 
 
 class UI:
-    def win(self):
-        logger.debug("Win game")
+    def on_win(self):
+        raise NotImplementedError()
 
-    def loose(self):
-        logger.debug("Loose game")
+    def on_loose(self):
+        raise NotImplementedError()
 
-    def stop(self):
-        logger.debug("Stop game")
+    def on_stop(self):
+        raise NotImplementedError()
 
-    def quit(self):
-        logger.debug("Quit game")
+    def on_quit(self):
+        raise NotImplementedError()
 
 
 class Game:
@@ -30,13 +29,18 @@ class Game:
         logger.info("Initializing game")
 
         self.resources = d2lib.reslib.Reslib()
-        self.ui = None
-        self.games = []
 
         # self.window    = sdl_window.SDLwindow(self.screen)
         gui.res = self.resources
 
         self.player = Player(config)
+
+    @property
+    def ui(self):
+        raise NotImplementedError()
+
+    def mini_games(self):
+        yield from []
 
     def run(self):
         """When game starts"""
@@ -48,6 +52,7 @@ class Game:
             # self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
             # self.draw_fg()
             # self.window.draw()
+        return self.state
 
     def on_game_over(self):
         pass
@@ -60,27 +65,23 @@ class Game:
     def on_win(self):
         """When player wins the game"""
         logger.info('Player win')
-        if self.ui is not None:
-            self.ui.win()
+        self.ui.on_win()
 
     def on_loose(self):
         """When player looses the game"""
         logger.info('Player loose')
-        if self.ui is not None:
-            self.ui.loose()
+        self.ui.on_loose()
 
     def end(self):
         """When player stops the game"""
         logger.info('Player stops')
-        if self.ui is not None:
-            self.ui.stop()
+        self.ui.on_stop()
         self.set_state(states.LOOSE)
 
     def quit(self):
         """When player quits from the game"""
         logger.info('Player quits')
-        if self.ui is not None:
-            self.ui.quit()
+        self.ui.on_quit()
         import sys
 
         sys.exit(0)
@@ -99,30 +100,25 @@ class Game:
         elif self.state == states.LOOSE:
             self.on_loose()
 
-    def play_mini_game(self, index):
-        if index not in range(len(self.games)):
-            return False
-
-        self.games[index].run()
-        self.state = self.games[index].state
-        if self.state == states.LOOSE:
-            self.set_state(states.LOOSE)
-        if self.state == states.WIN:
-            self.state = states.PLAY
+    def play_mini_game(self, mini_game):
         print("--------------------")
-
-        return True
+        state = mini_game.run()
+        if state == states.WIN:
+            self.set_state(states.PLAY)
+        else:
+            self.set_state(state)
 
     def process_events(self):
         """Process game events"""
-        for e in pygame.event.get():
-            if e.type == pygame.QUIT:
-                logger.debug("QUIT")
-                self.set_state(states.LOOSE)
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-                logger.debug("ESCAPE")
-                self.set_state(states.LOOSE)
-            self.process_event(e)
+        # for e in pygame.event.get():
+        #     if e.type == pygame.QUIT:
+        #         logger.debug("QUIT")
+        #         self.set_state(states.LOOSE)
+        #     if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+        #         logger.debug("ESCAPE")
+        #         self.set_state(states.LOOSE)
+        #     self.process_event(e)
+        pass
 
     def process_event(self, event):
         """Process event"""

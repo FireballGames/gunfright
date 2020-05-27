@@ -1,27 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-#  __init__.py
-#
-#  Copyright 2015 Dmitry Kutsenko <d2emonium@gmail.com>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
-
 import pygame
 from .screen import Screen
 
@@ -31,64 +7,6 @@ gui = None
 res = None
 
 screen_data = {}
-
-
-class PygameWin():
-    def __init__(self, **args):
-        self.state = True
-        self.main_theme = None
-        self.screen_size = [800, 600]
-
-        pygame.init()
-        self.init_window(**args)
-
-        # if 'main_theme' in args:
-        #     self.main_theme = args['main_theme']
-
-        if self.main_theme:
-            from .sound import init_sound
-            sound.init_sound(self.main_theme)
-
-    def init_window(self, **args):
-        import sys
-        version = sys.version_info;
-
-        # Setting default values
-        flag = pygame.DOUBLEBUF
-
-        print(args)
-
-        # Loading values from args
-        # screen_data = config['screens']
-        if 'size' in args:
-            self.screen_size = args['size']
-        if 'flag' in args:
-            flag = args['flag']
-        title = args['title']
-        if version[0] < 3 :
-            title = title.encode("utf8")
-
-        # Setting display mode
-        self.surface = pygame.display.set_mode(self.screen_size, flag)
-
-        # Other window options
-        if 'title' in args:
-            pygame.display.set_caption(title)
-        if 'icon' in res.args():
-            pygame.display.set_icon(res.load('icon', alpha=True))
-        if 'show_mouse' in args:
-            pygame.mouse.set_visible(args['show_mouse'])
-
-        return self.surface
-
-    def clear(self):
-        self.surface.fill((0, 0, 0))
-
-    def draw_image(self, image, pos=(0, 0)):
-        self.surface.blit(image, pos)
-
-    def draw(self):
-        pygame.display.flip()
 
 
 class MainGui(screen.Screen):
@@ -117,27 +35,6 @@ class MainGui(screen.Screen):
             window.blit(*self.pointer.move())
 
 
-def init_gui(config):
-    global screen_data, gui
-
-    print("INIT GUI")
-    print(config)
-    screen_data = config.screens
-
-    print(config.window)
-    win_config = config.window
-    win_config.update({
-        'main_theme': config.main_theme
-    })
-    gui = PygameWin(**win_config)
-
-
-def init_game(game):
-    global p, i, g, screen_data
-    g = game
-    i = MainGui(**screen_data['gui'])
-
-
 def win():
     global gui, screen_data
 
@@ -150,10 +47,3 @@ def loose():
 
     s = screen.Screen(**screen_data['loose'])
     s.show_screen(gui.surface)
-
-
-def main():
-    return 0
-
-if __name__ == '__main__':
-    main()
