@@ -42,8 +42,8 @@ class PygameWin():
         pygame.init()
         self.init_window(**args)
 
-        if 'main_theme' in args:
-            self.main_theme = args['main_theme']
+        # if 'main_theme' in args:
+        #     self.main_theme = args['main_theme']
 
         if self.main_theme:
             from .sound import init_sound
