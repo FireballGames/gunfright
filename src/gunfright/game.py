@@ -1,6 +1,7 @@
 """
 Gunfright game globals
 """
+import sys
 from d2game import states
 from d2game.game import Game
 from log import logger
@@ -26,7 +27,6 @@ class Gunfright(Game):
         self.__player = Player(self.config.player or {})
 
         self.__ui = UI(self.window, self.__player, self.config)
-        self.__ui.play()
 
     @property
     def ui(self):
@@ -36,6 +36,7 @@ class Gunfright(Game):
     def player(self):
         return self.__player
 
+    @property
     def mini_games(self):
         # yield Simple(self.player, self.config)
         yield from []
@@ -48,23 +49,17 @@ class Gunfright(Game):
         # self.player.level_up()
         # self.state = states.PLAY
 
-    def on_play(self):
-        super().on_play()
+    def next(self):
+        super().next()
 
         logger.info("Running the game")
 
-        self.next_level()
-        for game in self.mini_games():
-            # game.load_level(self.player.level)
-            self.play_mini_game(game)
-            if self.state != states.PLAY:
-                return
-            logger.debug("Next mini game")
-        self.shoot_bandit()
-        self.set_state(states.WIN)
+        self.ui.play()
 
-        logger.debug("State: %s", self.state)
-        logger.debug("--------------------")
+        self.next_level()
+        self.play_mini_games()
+        self.shoot_bandit()
+        self.win()
 
     def next_level(self):
         logger.debug("Next level screen")
@@ -75,5 +70,9 @@ class Gunfright(Game):
         # self.player.bonus = True
         # self.subgames[2].load_level(self.player.level)
         # self.play_subgame(2)
-        if self.state != states.PLAY:
+        if not self.is_playing:
            return
+
+    def quit(self):
+        super().quit()
+        sys.exit(0)
