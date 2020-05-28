@@ -7,22 +7,34 @@ from log import logger
 # from .minigames.simple import Simple
 # from .minigames.bountyshooter import BountyShooter
 # from .minigames.seekbandit import SeekBandit
-# from .player import Player
+from .player import Player
 from .ui import UI
+from .window import Window
 
 
 class Gunfright(Game):
     def __init__(self, config):
         super().__init__(config)
 
-        # self.player = Player(self.config)
+        window_config = {
+            **self.config.window,
+            'size': (800, 600),
+            'main_theme': self.config.main_theme,
+        }
+        self.window = Window(**window_config)
 
-        self.__ui = UI(self.config)
+        self.__player = Player(self.config.player or {})
+
+        self.__ui = UI(self.window, self.__player, self.config)
         self.__ui.play()
 
     @property
     def ui(self):
         return self.__ui
+
+    @property
+    def player(self):
+        return self.__player
 
     def mini_games(self):
         # yield Simple(self.player, self.config)
@@ -33,7 +45,7 @@ class Gunfright(Game):
 
     def on_win(self):
         super().on_win()
-        # self.player.levelup()
+        # self.player.level_up()
         # self.state = states.PLAY
 
     def on_play(self):

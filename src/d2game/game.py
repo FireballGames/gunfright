@@ -8,20 +8,6 @@ from . import states
 from .player import Player
 
 
-class UI:
-    def on_win(self):
-        raise NotImplementedError()
-
-    def on_loose(self):
-        raise NotImplementedError()
-
-    def on_stop(self):
-        raise NotImplementedError()
-
-    def on_quit(self):
-        raise NotImplementedError()
-
-
 class Game:
     def __init__(self, config):
         self.config = config
@@ -33,10 +19,12 @@ class Game:
         # self.window    = sdl_window.SDLwindow(self.screen)
         gui.res = self.resources
 
-        self.player = Player(config)
-
     @property
     def ui(self):
+        raise NotImplementedError()
+
+    @property
+    def player(self):
         raise NotImplementedError()
 
     def mini_games(self):
@@ -101,7 +89,7 @@ class Game:
             self.on_loose()
 
     def play_mini_game(self, mini_game):
-        print("--------------------")
+        logger.debug("--------------------")
         state = mini_game.run()
         if state == states.WIN:
             self.set_state(states.PLAY)

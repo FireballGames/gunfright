@@ -1,15 +1,65 @@
+import pygame
 from d2game import player
 from log import logger
 
 
 class Player(player.Player):
-
     def __init__(self, config):
         super().__init__(config)
+
+        self.x = 400
+        self.y = 300
+        self.width = 40
+        self.height = 60
+        self.speed = 15
+        self.__jump_counter = None
+
         self.score = 250
         self.shots = 6
         self.lives = 5
         self.bonus = True
+
+    @property
+    def is_jumping(self):
+        return self.__jump_counter is not None
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, (0, 0, 255), (self.x, self.y, self.width, self.height))
+
+    def move_to(self, x, y):
+        if x < 0:
+            if self.x > 5:
+                self.x -= self.speed
+        if x > 0:
+            if self.x < (800 - 40 - 5):
+                self.x += self.speed
+        if y < 0:
+            if self.y > 5:
+                self.y -= self.speed
+        if y > 0:
+            if self.y < (600 - 60 - 5):
+                self.y += self.speed
+
+    def start_jump(self):
+        self.__jump_counter = 10
+
+    def stop_jump(self):
+        self.__jump_counter = None
+
+    def jump(self):
+        if not self.is_jumping:
+            return
+
+        if self.__jump_counter < -10:
+            self.stop_jump()
+            return
+
+        if self.__jump_counter < 0:
+            self.y += (self.__jump_counter ** 2) / 2
+        else:
+            self.y -= (self.__jump_counter ** 2) / 2
+
+        self.__jump_counter -= 1
 
     def can_shoot(self):
         return self.shots > 0
