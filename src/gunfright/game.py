@@ -18,6 +18,7 @@ class Gunfright(Game):
         # self.player = Player(self.config)
 
         self.__ui = UI(self.config)
+        self.__ui.play()
 
     @property
     def ui(self):
