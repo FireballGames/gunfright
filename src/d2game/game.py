@@ -29,50 +29,48 @@ class Game(events.EventEmitter):
         Player starts the game
         """
         self.state = states.START
+        self.emit(events.START)
 
     def next(self):
+        # self.draw_bg()
+        # self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
+        # self.draw_fg()
+        # self.window.draw()
         raise NotImplementedError()
 
     def run(self):
         """
         Run the game
         """
-        self.start()
         self.state = states.PLAY
-        while self.is_playing:
-            self.next()
-            # self.draw_bg()
-            # self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
-            # self.draw_fg()
-            # self.window.draw()
-        return self.state
+        self.emit(events.PLAY)
 
     def win(self):
         """
         Player wins the game
         """
         self.state = states.WIN
-        self.emit(events.Event(events.WIN))
+        self.emit(events.WIN)
 
     def loose(self):
         """
         Player looses the game
         """
         self.state = states.LOOSE
-        self.emit(events.Event(events.LOOSE))
+        self.emit(events.LOOSE)
 
     def end(self):
         """
         Player stops the game
         """
-        self.emit(events.Event(events.STOP))
+        self.emit(events.STOP)
         self.loose()
 
     def quit(self):
         """
         Player quits from the game
         """
-        self.emit(events.Event(events.QUIT))
+        self.emit(events.QUIT)
 
     # Mini games processing
 
@@ -81,11 +79,20 @@ class Game(events.EventEmitter):
         yield from []
 
     def play_mini_games(self):
-        for game in self.mini_games:
-            # game.load_level(self.player.level)
-            state = game.run()
-            if state != states.WIN:
-                self.state = state
-                return
+        mini_games = self.mini_games
+
+        def event_processor(event_id, *args, **kwargs):
+            if event_id == events.WIN:
+                next_mini_game()
             else:
-                self.state = states.PLAY
+                self.emit(event_id, *args, **kwargs)
+
+        def next_mini_game():
+            game = next(mini_games, None)
+
+            if game is None:
+                return
+
+            game.register_event_processor(event_processor)
+            # game.load_level(self.player.level)
+            game.run()

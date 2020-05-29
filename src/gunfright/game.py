@@ -5,6 +5,7 @@ import logging
 import sys
 # from d2game import states
 from d2game.game import Game
+from . import events
 from .minigames.simple import Simple
 # from .minigames.bountyshooter import BountyShooter
 # from .minigames.seekbandit import SeekBandit
@@ -31,7 +32,10 @@ class Gunfright(Game):
         self.__player = Player(self.config.player or {})
 
         self.ui = UI(self.window, self.__player, self.config)
+
+        self.register_event_processor(self.event_processor)
         self.register_event_processor(self.ui.event_processor)
+        self.ui.register_event_processor(self.event_processor)
 
     @property
     def player(self):
@@ -48,7 +52,7 @@ class Gunfright(Game):
     def next(self):
         logger.info("Next Gunfright Loop")
 
-        self.process_events()
+        # self.process_events()
         # self.window.clear()
 
         self.next_level()
@@ -56,9 +60,9 @@ class Gunfright(Game):
         self.shoot_bandit()
         self.win()
 
-    def run(self):
+    def start(self):
         logger.info("Gunfright starts")
-        super().run()
+        super().start()
         self.window.run()
 
     def win(self):
@@ -92,14 +96,20 @@ class Gunfright(Game):
         # if not self.is_playing:
         #    return
 
-    # Event processing
+    def __on_play(self):
+        logger.info("Gunfright runs")
+        self.play_mini_games()
+        while self.is_playing:
+            pass
 
-    def process_event(self, event):
-        """Process event"""
-        pass
+    def __on_quit(self):
+        logger.info("Gunfright stops")
+        self.quit()
 
-    def process_events(self):
-        """Process game events"""
+    def event_processor(self, event_id, *args, **kwargs):
+        """
+        Process game events
+        """
         # for e in pygame.event.get():
         #     if e.type == pygame.QUIT:
         #         logger.debug("QUIT")
@@ -108,4 +118,8 @@ class Gunfright(Game):
         #         logger.debug("ESCAPE")
         #         self.set_state(states.LOOSE)
         #     self.process_event(e)
-        pass
+        print(event_id, *args, **kwargs)
+        if event_id == events.PLAY:
+            self.__on_play()
+        if event_id == events.QUIT:
+            self.__on_quit()

@@ -45,16 +45,20 @@ class Window(events.EventEmitter):
 
     def start(self):
         self.running = True
+        self.emit(events.START)
 
     def stop(self):
         self.running = False
+        self.emit(events.STOP)
 
     def next(self):
         pygame.time.delay(100)
         for event in pygame.event.get():
-            self.emit(events.Event(events.PYGAME, event))
-        self.emit(events.Event(events.KEYS, pygame.key.get_pressed()))
-        self.emit(events.Event(events.DRAW))
+            if event.type == pygame.QUIT:
+                self.emit(events.CLOSE, event)
+            self.emit(events.PYGAME, event)
+        self.emit(events.KEYS, pygame.key.get_pressed())
+        self.emit(events.DRAW)
         pygame.display.update()
 
     @classmethod
@@ -65,4 +69,4 @@ class Window(events.EventEmitter):
         self.start()
         while self.running:
             self.next()
-        self.emit(events.Event(events.QUIT))
+        self.emit(events.QUIT)
