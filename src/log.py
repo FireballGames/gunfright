@@ -6,10 +6,9 @@ LEVEL = logging.DEBUG
 LOGGER_NAME = 'gunfright'
 
 
-logging.basicConfig(
-    # "filename": "gunfright.log",
-    format=FORMAT,
-    level=LEVEL,
-)
-
-logger = logging.getLogger(LOGGER_NAME)
+def setup_logger():
+    logging.basicConfig(
+        # "filename": "gunfright.log",
+        format=FORMAT,
+        level=LEVEL,
+    )

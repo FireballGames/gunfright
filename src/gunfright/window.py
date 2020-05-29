@@ -1,15 +1,20 @@
+import logging
 import pygame
-from log import logger
+from d2game import events
 
 
-class Window:
+logger = logging.getLogger('gunfright.window')
+
+
+class Window(events.EventEmitter):
     def __init__(
         self,
         title="Game",
         size=(800, 600),
         **config,
     ):
-        logger.debug("INIT WINDOW %s", config)
+        super().__init__()
+        logger.debug("Initializing Window (%s)", config)
 
         # Setting default values
         # flag = pygame.DOUBLEBUF
@@ -36,35 +41,28 @@ class Window:
         # if self.main_theme:
         #    init_sound(self.main_theme)
 
+        self.running = False
+
+    def start(self):
         self.running = True
 
     def stop(self):
         self.running = False
 
-    @classmethod
-    def next_turn(cls):
+    def next(self):
         pygame.time.delay(100)
-
-    @classmethod
-    def update(cls):
+        for event in pygame.event.get():
+            self.emit(events.Event(events.PYGAME, event))
+        self.emit(events.Event(events.KEYS, pygame.key.get_pressed()))
+        self.emit(events.Event(events.DRAW))
         pygame.display.update()
 
     @classmethod
     def quit(cls):
         pygame.quit()
 
-    def play(
-        self,
-        on_event=lambda event: None,
-        on_keys=lambda keys: None,
-        on_draw=lambda: None,
-        on_quit=lambda: None,
-    ):
+    def run(self):
+        self.start()
         while self.running:
-            self.next_turn()
-            for event in pygame.event.get():
-                on_event(event)
-            on_keys(pygame.key.get_pressed())
-            on_draw()
-            self.update()
-        on_quit()
+            self.next()
+        self.emit(events.Event(events.QUIT))

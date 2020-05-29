@@ -1,5 +1,8 @@
+import logging
 import yaml
-from log import logger
+
+
+logger = logging.getLogger('config')
 
 
 class Config:

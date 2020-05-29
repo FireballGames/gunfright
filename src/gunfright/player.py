@@ -1,6 +1,9 @@
+import logging
 import pygame
 from d2game import player
-from log import logger
+
+
+logger = logging.getLogger('gunfright.player')
 
 
 class Player(player.Player):

@@ -3,25 +3,18 @@ Basic game module
 """
 # import d2lib.reslib
 # import gui
-from log import logger
-from . import states
+from . import events, states
 
 
-class Game:
+class Game(events.EventEmitter):
     def __init__(self, config):
-        logger.info("Initializing game")
+        super().__init__()
         self.config = config
-        self.__state = states.GAME_OVER
+        self.state = states.INIT
 
         # self.resources = d2lib.reslib.Reslib()
         # self.window    = sdl_window.SDLwindow(self.screen)
         # gui.res = self.resources
-
-    # Properties
-
-    @property
-    def ui(self):
-        raise NotImplementedError()
 
     @property
     def player(self):
@@ -31,109 +24,55 @@ class Game:
     def is_playing(self):
         return self.state == states.PLAY
 
-    # Event processing
-
-    def process_event(self, event):
-        """Process event"""
-        pass
-
-    def process_events(self):
-        """Process game events"""
-        # for e in pygame.event.get():
-        #     if e.type == pygame.QUIT:
-        #         logger.debug("QUIT")
-        #         self.set_state(states.LOOSE)
-        #     if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-        #         logger.debug("ESCAPE")
-        #         self.set_state(states.LOOSE)
-        #     self.process_event(e)
-        pass
-
-    # Main game loop
+    def start(self):
+        """
+        Player starts the game
+        """
+        self.state = states.START
 
     def next(self):
-        """Game main loop"""
-        self.process_events()
-        # self.window.clear()
+        raise NotImplementedError()
 
-    # State handlers
-
-    def on_game_over(self):
-        pass
-
-    def on_play(self):
+    def run(self):
+        """
+        Run the game
+        """
+        self.start()
+        self.state = states.PLAY
         while self.is_playing:
             self.next()
             # self.draw_bg()
             # self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
             # self.draw_fg()
             # self.window.draw()
+        return self.state
 
-    def on_win(self):
-        """When player wins the game"""
-        logger.info('Player win')
-        self.ui.on_win()
-
-    def on_loose(self):
-        """When player looses the game"""
-        logger.info('Player loose')
-        self.ui.on_loose()
-
-    # Main loop
-
-    def run(self):
+    def win(self):
         """
-        Player starts the game
+        Player wins the game
         """
-        logger.info("Game starts")
-        self.play()
-        if self.state == states.WIN:
-            return states.PLAY
-        else:
-            return self.state
+        self.state = states.WIN
+        self.emit(events.Event(events.WIN))
+
+    def loose(self):
+        """
+        Player looses the game
+        """
+        self.state = states.LOOSE
+        self.emit(events.Event(events.LOOSE))
 
     def end(self):
         """
         Player stops the game
         """
-        logger.info("Game stops")
-        self.ui.on_stop()
+        self.emit(events.Event(events.STOP))
         self.loose()
 
     def quit(self):
         """
         Player quits from the game
         """
-        logger.info('Player quits')
-        self.ui.on_quit()
-
-    @property
-    def state(self):
-        return self.__state
-
-    @state.setter
-    def state(self, state):
-        self.__state = state
-        if self.__state == states.GAME_OVER:
-            self.on_game_over()
-        elif self.__state == states.PLAY:
-            self.on_play()
-        elif self.__state == states.WIN:
-            self.on_win()
-        elif self.__state == states.LOOSE:
-            self.on_loose()
-
-    def game_over(self):
-        self.state = states.GAME_OVER
-
-    def play(self):
-        self.state = states.PLAY
-
-    def win(self):
-        self.state = states.WIN
-
-    def loose(self):
-        self.state = states.WIN
+        self.emit(events.Event(events.QUIT))
 
     # Mini games processing
 
@@ -143,9 +82,10 @@ class Game:
 
     def play_mini_games(self):
         for game in self.mini_games:
-            logger.debug("Next mini game")
-            logger.debug("--------------------")
             # game.load_level(self.player.level)
-            self.state = game.play_as_mini_game()
-            if not self.is_playing:
-                break
+            state = game.run()
+            if state != states.WIN:
+                self.state = state
+                return
+            else:
+                self.state = states.PLAY

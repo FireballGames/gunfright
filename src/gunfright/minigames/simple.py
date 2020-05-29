@@ -1,78 +1,55 @@
-import pygame
-import gui
-import gui.controls
-import screens.shootmoney
+import logging
 from d2game import states
 from d2game.game import Game
-from log import logger
-from ..level import ShootBounty
+
+
+logger = logging.getLogger('gunfright.simple')
 
 
 class Simple(Game):
-    def __init__(self, player, config):
+    def __init__(self, ui, player, config):
+        logger.debug("Simple game")
         super().__init__(config)
 
-        logger.debug("Simple game")
+        self.__ui = ui
+        self.__player = player
+        # self.controls = {}
+        # self.screen = None
+        # self.level = None
 
-        self.player = player
-        self.controls = {}
-        self.screen = None
-        self.level = None
+        self.__ui.window.register_event_processor(self.process_events)
+
+    @property
+    def ui(self):
+        return self.__ui
+
+    @property
+    def player(self):
+        return self.__player
 
     def run(self):
         logger.debug("Running simple game")
-        # gui.g = self
-        # self.play_sound()
-        # self.load_level(self.player.level)
-
         super().run()
-
-        # self.player.bonus = False
         return states.LOOSE
 
-    def on_play(self):
-        # gui.gui.clear()
+    def next(self):
+        self.win()
 
-        super().on_play()
-
-        # self.screen.show_image(gui.gui.surface)
-
-        # pygame.display.flip()
-        # pygame.time.delay(2)
-        # # self.screen.show_screen(gui.gui.surface)
-
-        # if not self.screen.showing:
-        #     self.set_state(states.WIN)
+    # Event processing
 
     def process_event(self, event):
-        super().process_event(event)
+        """Process event"""
+        pass
 
-        # self.screen.interface.pointer.process_event(event, screens.shootmoney.moneybags)
-
-    def load_level(self, level):
-        logger.debug("Loading level %s" % (level))
-
-        level_data = self.config.level(level)
-        level_screen = self.config.get_screen('shootmoney')
-        level_screen.update({
-            'background': level_data["background"],
-            'interface':  gui.i
-        })
-
-        if level_data['type'] == 'bounty':
-            level_data['player'] = self.player
-            self.level = ShootBounty(**level_data)
-        else:
-            self.level = None
-
-        if not self.player.bonus:
-            return
-
-        self.screen = screens.shootmoney.ShootMoney(**level_screen)
-        self.screen.init_win()
-
-    def draw(self):
-        self.controls['main'].show()
-        self.controls['shots'].show(self.player.shots)
-        self.controls['lives'].show(self.player.lives)
-        self.controls['score'].show(self.player.score)
+    def process_events(self, event):
+        """Process game events"""
+        # for e in pygame.event.get():
+        #     if e.type == pygame.QUIT:
+        #         logger.debug("QUIT")
+        #         self.set_state(states.LOOSE)
+        #     if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+        #         logger.debug("ESCAPE")
+        #         self.set_state(states.LOOSE)
+        #     self.process_event(e)
+        # self.window.clear()
+        pass

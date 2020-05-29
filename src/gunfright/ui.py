@@ -1,8 +1,11 @@
+import logging
 import pygame
 # import gui
 # import gui.controls
-from d2game import ui
-from log import logger
+from d2game import ui, events
+
+
+logger = logging.getLogger('gunfright.ui')
 
 
 class UI(ui.UI):
@@ -29,9 +32,12 @@ class UI(ui.UI):
         self.__init_game()
         # self.game = self.__init_game(current_game)
 
+        self.running = True
+
     def __init_ui(self):
-        logger.debug("INIT GUI")
+        logger.debug("Registering UI")
         self.__screen_data = self.config.screens
+        self.window.register_event_processor(self.event_processor)
 
     def __init_game(self):
         # self.g = game
@@ -41,15 +47,11 @@ class UI(ui.UI):
     def clear(self):
         self.window.surface.fill((0, 0, 0))
 
-    @classmethod
-    def on_before_turn(cls):
-        pygame.time.delay(100)
-
-    def on_event(self, event):
+    def on_event(self, event, *args, **kwargs):
         if event.type == pygame.QUIT:
             self.window.stop()
 
-    def on_keys(self, keys):
+    def on_keys(self, keys, *args, **kwargs):
         if keys[pygame.K_LEFT]:
             if self.player.x > self.min_x:
                 self.player.move_to(-1, 0)
@@ -69,26 +71,24 @@ class UI(ui.UI):
             if keys[pygame.K_SPACE]:
                 self.player.start_jump()
 
-    def on_draw(self):
+    def on_draw(self, *args, **kwargs):
         self.clear()
         self.player.draw(self.window.surface)
         # pygame.display.flip()
 
-    def on_win(self):
+    def on_win(self, *args, **kwargs):
         logger.debug("Win game")
         # gui.win()
-        pass
 
-    def on_loose(self):
+    def on_loose(self, *args, **kwargs):
         logger.debug("Loose game")
         # gui.loose()
         # self.game.quit()
-        pass
 
-    def on_stop(self):
+    def on_stop(self, *args, **kwargs):
         logger.debug("Stop game")
 
-    def on_quit(self):
+    def on_quit(self, *args, **kwargs):
         logger.debug("Quit game")
         self.window.quit()
 
@@ -107,10 +107,18 @@ class UI(ui.UI):
         # self.window.blit(image, pos)
         pass
 
-    def play(self):
-        self.window.play(
-            on_event=self.on_event,
-            on_keys=self.on_keys,
-            on_draw=self.on_draw,
-            on_quit=self.on_quit,
-        )
+    def event_processor(self, event):
+        if event.event_id == events.PYGAME:
+            self.on_event(*event.args, **event.kwargs)
+        elif event.event_id == events.KEYS:
+            self.on_keys(*event.args, **event.kwargs)
+        elif event.event_id == events.DRAW:
+            self.on_draw(*event.args, **event.kwargs)
+        elif event.event_id == events.WIN:
+            self.on_win(*event.args, **event.kwargs)
+        elif event.event_id == events.LOOSE:
+            self.on_loose(*event.args, **event.kwargs)
+        elif event.event_id == events.STOP:
+            self.on_stop(*event.args, **event.kwargs)
+        elif event.event_id == events.QUIT:
+            self.on_quit(*event.args, **event.kwargs)

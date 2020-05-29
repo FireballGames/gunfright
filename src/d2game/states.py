@@ -1,4 +1,5 @@
-GAME_OVER = 0
-PLAY = 1
-WIN = 2
-LOOSE = 3
+INIT = 0
+START = 1
+PLAY = 2
+WIN = 3
+LOOSE = 4
