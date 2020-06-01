@@ -1,72 +1,14 @@
-import logging
 import pygame
-from d2game import events
+from v2.window import Window as BaseWindow
 
 
-logger = logging.getLogger('gunfright.window')
-
-
-class Window(events.EventEmitter):
-    def __init__(
-        self,
-        title="Game",
-        size=(800, 600),
-        **config,
-    ):
-        super().__init__()
-        logger.debug("Initializing Window (%s)", config)
-
-        # Setting default values
-        # flag = pygame.DOUBLEBUF
-
-        # Loading values from args
-        # # screen_data = config['screens']
-        # if 'flag' in window_config:
-        #     flag = window_config['flag']
-
-        pygame.init()
-
-        # Setting display mode
-        # self.surface = pygame.display.set_mode(size, flag)
-        self.surface = pygame.display.set_mode(size)
-        pygame.display.set_caption(title)
-        # if 'icon' in self.__res.args():
-        #     pygame.display.set_icon(self.__res.load('icon', alpha=True))
-        # if 'show_mouse' in window_config:
-        #     pygame.mouse.set_visible(window_config['show_mouse'])
-
-        # Music
-        # if 'main_theme' in window_config:
-        #     self.main_theme = window_config['main_theme']
-        # if self.main_theme:
-        #    init_sound(self.main_theme)
-
-        self.running = False
-
-    def start(self):
-        self.running = True
-        self.emit(events.START)
-
-    def stop(self):
-        self.running = False
-        self.emit(events.STOP)
-
-    def next(self):
-        pygame.time.delay(100)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.emit(events.CLOSE, event)
-            self.emit(events.PYGAME, event)
-        self.emit(events.KEYS, pygame.key.get_pressed())
-        self.emit(events.DRAW)
-        pygame.display.update()
-
+class Window(BaseWindow):
     @classmethod
-    def quit(cls):
-        pygame.quit()
+    def next_turn(cls):
+        pygame.time.delay(100)
 
-    def run(self):
-        self.start()
-        while self.running:
-            self.next()
-        self.emit(events.QUIT)
+    def draw_player(self, player):
+        pygame.draw.rect(self.surface, (0, 0, 255), (player.x, player.y, player.width, player.height))
+
+    def clear(self):
+        self.surface.fill((0, 0, 0))

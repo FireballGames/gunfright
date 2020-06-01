@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from config import Config
-from gunfright.game import Gunfright
+from gunfright import Gunfright
 from log import setup_logger
 
 

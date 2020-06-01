@@ -7,8 +7,8 @@ logger = logging.getLogger('gunfright.player')
 
 
 class Player(player.Player):
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, **options):
+        super().__init__(**options)
 
         self.x = 400
         self.y = 300
@@ -25,9 +25,6 @@ class Player(player.Player):
     @property
     def is_jumping(self):
         return self.__jump_counter is not None
-
-    def draw(self, surface):
-        pygame.draw.rect(surface, (0, 0, 255), (self.x, self.y, self.width, self.height))
 
     def move_to(self, x, y):
         if x < 0:
@@ -63,6 +60,8 @@ class Player(player.Player):
             self.y -= (self.__jump_counter ** 2) / 2
 
         self.__jump_counter -= 1
+
+    ####
 
     def can_shoot(self):
         return self.shots > 0

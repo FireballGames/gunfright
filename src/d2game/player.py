@@ -1,6 +1,6 @@
 class Player:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, **options):
+        self.options = options
 
         self.score = 0
         self.level = 1
