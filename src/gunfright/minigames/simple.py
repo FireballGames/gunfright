@@ -1,6 +1,7 @@
 import pygame
 from v2.window import event
 from v2.d2game import Game
+from ..player import Player
 
 
 import logging
@@ -9,7 +10,32 @@ import logging
 logger = logging.getLogger('gunfright.simple')
 
 
+def load_all(*images):
+    return [pygame.image.load(image) for image in images]
+
+
 class Simple(Game):
+    class Resources:
+        def __init__(self):
+            self.frames = {
+                Player.LEFT: load_all(
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                ),
+                Player.RIGHT: load_all(
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                    'res/quickdraw.png',
+                ),
+            }
+            self.stand = pygame.image.load('res/quickdraw.png')
+            self.background = pygame.image.load('res/intro.png')
+
     def __init__(self, window, player, **config):
         logger.debug("Simple game")
         super().__init__(**config)
@@ -19,32 +45,55 @@ class Simple(Game):
         # self.screen = None
         # self.level = None
 
+        self.resources = self.Resources()
+
         self.min_x = 15
         self.max_x = 800 - 15 - self.player.width
         self.min_y = 15
         self.max_y = 600 - 15 - self.player.height
 
+    def clear(self):
+        self.window.surface.blit(self.resources.background, (0, 0))
+        self.player.direction = None
+        self.player.frame_id = 0
+
+    def draw_player(self, player):
+        if self.player.frame_id > 25:
+            self.player.frame_id = 0
+
+        frames = self.resources.frames.get(self.player.direction, None)
+        if frames:
+            frame_id = self.player.frame_id // 5
+            self.window.surface.blit(frames[frame_id], (player.x, player.y))
+        else:
+            self.window.surface.blit(self.resources.stand, (player.x, player.y))
+
+        self.player.frame_id += 1
+
+        # pygame.draw.rect(self.window.surface, (0, 0, 255), (player.x, player.y, player.width, player.height))
+        pass
+
     def __on_left(self):
         if self.player.x > self.min_x:
-            self.player.move_to(-1, 0)
+            self.player.move(self.player.LEFT)
 
     def __on_right(self):
         if self.player.x < self.max_x:
-            self.player.move_to(1, 0)
+            self.player.move(self.player.RIGHT)
 
     def __on_up(self):
         if self.player.is_jumping:
             return
 
         if self.player.y > self.min_y:
-            self.player.move_to(0, -1)
+            self.player.move(self.player.UP)
 
     def __on_down(self):
         if self.player.is_jumping:
             return
 
         if self.player.y < self.max_y:
-            self.player.move_to(0, 1)
+            self.player.move(self.player.DOWN)
 
     def __on_jump(self):
         if self.player.is_jumping:
@@ -56,8 +105,8 @@ class Simple(Game):
         self.running = False
 
     def __on_draw(self, *args, **kwargs):
-        self.window.clear()
-        self.window.draw_player(self.player)
+        self.clear()
+        self.draw_player(self.player)
 
     def __on_keys(self, keys=(), *args, **kwargs):
         handlers = {
@@ -66,6 +115,7 @@ class Simple(Game):
             pygame.K_UP: self.__on_up,
             pygame.K_DOWN: self.__on_down,
             pygame.K_SPACE: self.__on_jump,
+            pygame.K_ESCAPE: self.__on_close,
         }
 
         for key, handler in handlers.items():

@@ -7,6 +7,11 @@ logger = logging.getLogger('gunfright.player')
 
 
 class Player(player.Player):
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
+
     def __init__(self, **options):
         super().__init__(**options)
 
@@ -22,21 +27,26 @@ class Player(player.Player):
         self.lives = 5
         self.bonus = True
 
+        self.direction = None
+        self.frame_id = 0
+
     @property
     def is_jumping(self):
         return self.__jump_counter is not None
 
-    def move_to(self, x, y):
-        if x < 0:
+    def move(self, direction):
+        self.direction = direction
+        if direction == self.LEFT:
             if self.x > 5:
                 self.x -= self.speed
-        if x > 0:
+        elif direction == self.RIGHT:
+            self.direction = self.RIGHT
             if self.x < (800 - 40 - 5):
                 self.x += self.speed
-        if y < 0:
+        elif direction == self.UP:
             if self.y > 5:
                 self.y -= self.speed
-        if y > 0:
+        elif direction == self.DOWN:
             if self.y < (600 - 60 - 5):
                 self.y += self.speed
 
@@ -105,7 +115,7 @@ class Player(player.Player):
         print("Chance %s vs %s" % (chance, 50))
         self.bonus = chance < 50
 
-    def move(self, dir, map):
+    def move_old(self, dir, map):
         logger.debug("Move event from %s to %s" % (self.pos, dir))
         logger.debug(map)
 
