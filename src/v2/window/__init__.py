@@ -1,5 +1,5 @@
 import pygame
-from . import event
+from collections import defaultdict
 
 
 class Window:
@@ -7,27 +7,62 @@ class Window:
         self,
         title="Game",
         size=(800, 600),
-        **config,
+        frame_rate=50,
+        **options,
     ):
-        self.config = config
+        self.options = options
+        self.frame_rate = frame_rate
 
         pygame.init()
 
         self.surface = pygame.display.set_mode(size)
         pygame.display.set_caption(title)
 
+        self.clock = pygame.time.Clock()
+
         self.running = True
 
+        self.turn_handlers = []
+        self.quit_handlers = []
+        self.keydown_handlers = defaultdict(list)
+        self.keyup_handlers = defaultdict(list)
+        self.keys_handlers = defaultdict(list)
+        self.mouse_handlers = []
+        self.update_handlers = []
+        self.draw_handlers = []
+
     @classmethod
-    def update(cls):
-        yield event.Event(event.ON_NEXT_TURN)
+    def handle_event(cls, handlers, *args, **kwargs):
+        for handler in handlers:
+            handler(*args, **kwargs)
+
+    def update(self):
+        self.handle_event(self.turn_handlers)
+
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
-                yield event.Event(event.ON_CLOSE)
-            yield event.Event(event.ON_PYGAME, e)
-        yield event.Event(event.ON_KEYS, pygame.key.get_pressed())
-        yield event.Event(event.ON_DRAW)
+                self.handle_event(self.quit_handlers)
+            elif e.type == pygame.KEYDOWN:
+                self.handle_event(self.keydown_handlers[e.key])
+            elif e.type == pygame.KEYUP:
+                self.handle_event(self.keyup_handlers[e.key])
+            elif e.type in (
+                pygame.MOUSEBUTTONUP,
+                pygame.MOUSEBUTTONDOWN,
+                pygame.MOUSEMOTION,
+            ):
+                self.handle_event(self.mouse_handlers, e.type, e.pos)
+        keys = pygame.key.get_pressed()
+        for key_id, handlers in self.keys_handlers.items():
+            if keys[key_id]:
+                self.handle_event(self.keys_handlers[key_id])
+
+        self.handle_event(self.update_handlers)
+        self.handle_event(self.draw_handlers)
+
         pygame.display.update()
+
+        self.clock.tick(self.frame_rate)
 
     @classmethod
     def close(cls):

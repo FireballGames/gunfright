@@ -1,4 +1,5 @@
 import pygame
+from collections import defaultdict
 from v2.window import event
 from v2.d2game import Game
 from ..player import Player
@@ -37,26 +38,36 @@ class Simple(Game):
             self.stand = pygame.image.load('res/quickdraw.png')
             self.background = pygame.image.load('res/intro.png')
 
-    def __init__(self, window, player, **config):
+    def __init__(self, window, player, **options):
         logger.debug("Simple game")
-        super().__init__(**config)
-        self.window = window
-        self.player = player
+        super().__init__(window, player, **options)
+        self.objects = []
         # self.controls = {}
         # self.screen = None
         # self.level = None
-
-        self.resources = self.Resources()
-
-        self.min_x = 15
-        self.max_x = 800 - 15 - self.player.width
-        self.min_y = 15
-        self.max_y = 600 - 15 - self.player.height
-
+        self.bounds = pygame.Rect(15, 15, 800 - 30, 600 - 30)
         self.missiles = []
 
+        self.res = self.Resources()
+
+        self.window.quit_handlers.append(self.stop)
+        self.window.keydown_handlers = defaultdict(list)
+        self.window.keyup_handlers = defaultdict(list)
+        self.window.mouse_handlers = []
+        self.window.keys_handlers = defaultdict(list)
+        self.window.update_handlers.append(self.update)
+        self.window.draw_handlers.append(self.draw)
+
+        self.window.keys_handlers[pygame.K_LEFT] = [self.__on_left]
+        self.window.keys_handlers[pygame.K_RIGHT] = [self.__on_right]
+        self.window.keys_handlers[pygame.K_UP] = [self.__on_up]
+        self.window.keys_handlers[pygame.K_DOWN] = [self.__on_down]
+        self.window.keys_handlers[pygame.K_SPACE] = [self.__on_jump]
+        self.window.keys_handlers[pygame.K_ESCAPE] = [self.stop]
+        self.window.keys_handlers[pygame.K_f] = [self.__on_shoot]
+
     def clear(self):
-        self.window.surface.blit(self.resources.background, (0, 0))
+        self.window.surface.blit(self.res.background, (0, 0))
         self.player.direction = None
         self.player.frame_id = 0
 
@@ -64,12 +75,12 @@ class Simple(Game):
         if self.player.frame_id > 25:
             self.player.frame_id = 0
 
-        frames = self.resources.frames.get(self.player.direction, None)
+        frames = self.res.frames.get(self.player.direction, None)
         if frames:
             frame_id = self.player.frame_id // 5
             self.window.surface.blit(frames[frame_id], (player.x, player.y))
         else:
-            self.window.surface.blit(self.resources.stand, (player.x, player.y))
+            self.window.surface.blit(self.res.stand, (player.x, player.y))
         # pygame.draw.rect(self.window.surface, (0, 0, 255), (player.x, player.y, player.width, player.height))
 
         self.player.frame_id += 1
@@ -78,25 +89,25 @@ class Simple(Game):
         pygame.draw.circle(self.window.surface, missile.color, (missile.x, missile.y), missile.r)
 
     def __on_left(self):
-        if self.player.x > self.min_x:
+        if self.player.x > self.bounds.left:
             self.player.move(self.player.LEFT)
 
     def __on_right(self):
-        if self.player.x < self.max_x:
+        if self.player.x < self.bounds.right - self.player.width:
             self.player.move(self.player.RIGHT)
 
     def __on_up(self):
         if self.player.is_jumping:
             return
 
-        if self.player.y > self.min_y:
+        if self.player.y > self.bounds.top:
             self.player.move(self.player.UP)
 
     def __on_down(self):
         if self.player.is_jumping:
             return
 
-        if self.player.y < self.max_y:
+        if self.player.y < self.bounds.bottom - self.player.height:
             self.player.move(self.player.DOWN)
 
     def __on_jump(self):
@@ -116,42 +127,12 @@ class Simple(Game):
             1 if self.player.shoot_direction == self.player.RIGHT else -1,
         ))
 
-    def __on_close(self, *args, **kwargs):
+    def stop(self):
         self.running = False
 
-    def __on_draw(self, *args, **kwargs):
-        self.clear()
-        self.draw_player(self.player)
+    def update(self):
         for missile in self.missiles:
-            self.draw_missile(missile)
-
-    def __on_keys(self, keys=(), *args, **kwargs):
-        handlers = {
-            pygame.K_LEFT: self.__on_left,
-            pygame.K_RIGHT: self.__on_right,
-            pygame.K_UP: self.__on_up,
-            pygame.K_DOWN: self.__on_down,
-            pygame.K_SPACE: self.__on_jump,
-            pygame.K_ESCAPE: self.__on_close,
-            pygame.K_f: self.__on_shoot
-        }
-
-        for key, handler in handlers.items():
-            if not keys[key]:
-                continue
-            handler()
-
-    def next(self):
-        handlers = {
-            event.ON_CLOSE: self.__on_close,
-            event.ON_DRAW: self.__on_draw,
-            event.ON_KEYS: self.__on_keys,
-        }
-
-        self.window.next_turn()
-
-        for missile in self.missiles:
-            if self.min_x < missile.x < self.max_x:
+            if self.bounds.left < missile.x < self.bounds.right:
                 missile.next()
             else:
                 self.missiles.pop(self.missiles.index(missile))
@@ -159,13 +140,19 @@ class Simple(Game):
         if self.player.is_jumping:
             self.player.jump()
 
-        for e in self.window.update():
-            handler = handlers.get(e.event_id)
-            if not handler:
-                continue
-            handler(*e.args, **e.kwargs)
+        # for o in self.objects:
+        #     o.update()
+        pass
+
+    def draw(self):
+        self.clear()
+        self.draw_player(self.player)
+        for missile in self.missiles:
+            self.draw_missile(missile)
+        # for o in self.objects:
+        #     o.draw(self.window.surface)
 
     def run(self):
         logger.debug("Running simple game")
         while self.running:
-            self.next()
+            self.window.update()

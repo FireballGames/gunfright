@@ -19,7 +19,7 @@ class Player(player.Player):
         self.y = 300
         self.width = 40
         self.height = 60
-        self.speed = 15
+        self.speed = 5
         self.__jump_counter = None
 
         self.score = 250
@@ -54,7 +54,7 @@ class Player(player.Player):
                 self.y += self.speed
 
     def start_jump(self):
-        self.__jump_counter = 10
+        self.__jump_counter = 20
 
     def stop_jump(self):
         self.__jump_counter = None
@@ -63,14 +63,14 @@ class Player(player.Player):
         if not self.is_jumping:
             return
 
-        if self.__jump_counter < -10:
+        if self.__jump_counter < -20:
             self.stop_jump()
             return
 
         if self.__jump_counter < 0:
-            self.y += (self.__jump_counter ** 2) / 2
+            self.y += (self.__jump_counter ** 2) / 16
         else:
-            self.y -= (self.__jump_counter ** 2) / 2
+            self.y -= (self.__jump_counter ** 2) / 16
 
         self.__jump_counter -= 1
 
