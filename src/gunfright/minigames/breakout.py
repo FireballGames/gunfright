@@ -1,6 +1,46 @@
 import pygame
 from collections import defaultdict
 from v2.d2game import Game
+from v2.d2game.game_object import GameObject
+
+
+class Brick(GameObject):
+    def __init__(self, bounds, color, effect=None, **options):
+        super().__init__(bounds, (0, 0), **options)
+        self.color = color
+        self.effect = effect
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.bounds)
+
+
+class Ball(GameObject):
+    def __init__(self, x, y, r, color, speed, **options):
+        super().__init__(
+            (x - r, y - r, r * 2, r * 2),
+            speed,
+            **options,
+        )
+        self.r = r
+        self.d = r * 2
+        self.color = color
+
+    def draw(self, surface):
+        pygame.draw.circle(surface, self.color, self.center, self.r)
+
+
+class Paddle(GameObject):
+    LEFT = 0
+    RIGHT = 1
+
+    def __init__(self, bounds, color, offset, **options):
+        super().__init__(bounds, (0, 0), **options)
+        self.color = color
+        self.offset = offset
+        self.direction = None
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.bounds)
 
 
 class Breakout(Game):

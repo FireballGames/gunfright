@@ -43,8 +43,8 @@ class GameObject:
     def centery(self):
         return self.bounds.centery
 
-    def draw(self):
-        pass
+    def draw(self, surface):
+        raise NotImplementedError()
 
     def move(self, dx, dy):
         self.bounds = self.bounds.move(dx, dy)
