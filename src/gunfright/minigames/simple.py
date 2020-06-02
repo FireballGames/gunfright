@@ -2,6 +2,7 @@ import pygame
 from v2.window import event
 from v2.d2game import Game
 from ..player import Player
+from ..missile import Missile
 
 
 import logging
@@ -52,6 +53,8 @@ class Simple(Game):
         self.min_y = 15
         self.max_y = 600 - 15 - self.player.height
 
+        self.missiles = []
+
     def clear(self):
         self.window.surface.blit(self.resources.background, (0, 0))
         self.player.direction = None
@@ -67,11 +70,12 @@ class Simple(Game):
             self.window.surface.blit(frames[frame_id], (player.x, player.y))
         else:
             self.window.surface.blit(self.resources.stand, (player.x, player.y))
+        # pygame.draw.rect(self.window.surface, (0, 0, 255), (player.x, player.y, player.width, player.height))
 
         self.player.frame_id += 1
 
-        # pygame.draw.rect(self.window.surface, (0, 0, 255), (player.x, player.y, player.width, player.height))
-        pass
+    def draw_missile(self, missile):
+        pygame.draw.circle(self.window.surface, missile.color, (missile.x, missile.y), missile.r)
 
     def __on_left(self):
         if self.player.x > self.min_x:
@@ -101,12 +105,25 @@ class Simple(Game):
 
         self.player.start_jump()
 
+    def __on_shoot(self):
+        if len(self.missiles) >= 5:
+            return
+        self.missiles.append(Missile(
+            self.player.x + self.player.width // 2,
+            self.player.y + self.player.height // 2,
+            5,
+            (255, 0, 0),
+            1 if self.player.shoot_direction == self.player.RIGHT else -1,
+        ))
+
     def __on_close(self, *args, **kwargs):
         self.running = False
 
     def __on_draw(self, *args, **kwargs):
         self.clear()
         self.draw_player(self.player)
+        for missile in self.missiles:
+            self.draw_missile(missile)
 
     def __on_keys(self, keys=(), *args, **kwargs):
         handlers = {
@@ -116,6 +133,7 @@ class Simple(Game):
             pygame.K_DOWN: self.__on_down,
             pygame.K_SPACE: self.__on_jump,
             pygame.K_ESCAPE: self.__on_close,
+            pygame.K_f: self.__on_shoot
         }
 
         for key, handler in handlers.items():
@@ -131,6 +149,12 @@ class Simple(Game):
         }
 
         self.window.next_turn()
+
+        for missile in self.missiles:
+            if self.min_x < missile.x < self.max_x:
+                missile.next()
+            else:
+                self.missiles.pop(self.missiles.index(missile))
 
         if self.player.is_jumping:
             self.player.jump()

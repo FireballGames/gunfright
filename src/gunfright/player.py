@@ -28,6 +28,7 @@ class Player(player.Player):
         self.bonus = True
 
         self.direction = None
+        self.shoot_direction = self.RIGHT
         self.frame_id = 0
 
     @property
@@ -39,10 +40,12 @@ class Player(player.Player):
         if direction == self.LEFT:
             if self.x > 5:
                 self.x -= self.speed
+            self.shoot_direction = self.LEFT
         elif direction == self.RIGHT:
             self.direction = self.RIGHT
             if self.x < (800 - 40 - 5):
                 self.x += self.speed
+            self.shoot_direction = self.RIGHT
         elif direction == self.UP:
             if self.y > 5:
                 self.y -= self.speed
