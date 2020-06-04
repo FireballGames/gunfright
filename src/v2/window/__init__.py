@@ -27,7 +27,9 @@ class Window:
         self.keydown_handlers = defaultdict(list)
         self.keyup_handlers = defaultdict(list)
         self.keys_handlers = defaultdict(list)
-        self.mouse_handlers = []
+        self.mouse_move_handlers = []
+        self.mouse_button_up_handlers = []
+        self.mouse_button_down_handlers = []
         self.update_handlers = []
         self.draw_handlers = []
 
@@ -43,19 +45,19 @@ class Window:
             if e.type == pygame.QUIT:
                 self.handle_event(self.quit_handlers)
             elif e.type == pygame.KEYDOWN:
-                self.handle_event(self.keydown_handlers[e.key])
+                self.handle_event(self.keydown_handlers[e.key], e)
             elif e.type == pygame.KEYUP:
-                self.handle_event(self.keyup_handlers[e.key])
-            elif e.type in (
-                pygame.MOUSEBUTTONUP,
-                pygame.MOUSEBUTTONDOWN,
-                pygame.MOUSEMOTION,
-            ):
-                self.handle_event(self.mouse_handlers, e.type, e.pos)
+                self.handle_event(self.keyup_handlers[e.key], e)
+            elif e.type == pygame.MOUSEBUTTONUP:
+                self.handle_event(self.mouse_button_up_handlers, e)
+            elif e.type == pygame.MOUSEBUTTONDOWN:
+                self.handle_event(self.mouse_button_down_handlers, e)
+            elif e.type == pygame.MOUSEMOTION:
+                self.handle_event(self.mouse_move_handlers, e)
         keys = pygame.key.get_pressed()
         for key_id, handlers in self.keys_handlers.items():
             if keys[key_id]:
-                self.handle_event(self.keys_handlers[key_id])
+                self.handle_event(self.keys_handlers[key_id], keys)
 
         self.handle_event(self.update_handlers)
         self.handle_event(self.draw_handlers)
