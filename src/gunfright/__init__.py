@@ -2,11 +2,12 @@
 Gunfright game globals
 """
 import logging
+import pygame
 # from d2game import states
 # from d2game.game import Game
 from . import events
+from .minigames.bountyshooter import BountyShooter
 from .minigames.simple import Simple
-# from .minigames.bountyshooter import BountyShooter
 # from .minigames.seekbandit import SeekBandit
 from .player import Player
 from .window import Window
@@ -34,9 +35,18 @@ class Gunfright:
     @property
     def mini_games(self):
         logger.info("Next Mini Game")
-        yield Simple(self.window, self.player)
-        # yield Simple(self.ui, self.player, **self.config)
-        # yield BountyShooter(self.player, **self.config),
+        width = 800
+        height = 600
+        offset = 70
+        yield BountyShooter(
+            self.window,
+            self.player,
+            bounds=pygame.Rect(offset, offset, width - offset * 2, height - offset * 2),
+        )
+        yield Simple(
+            self.window,
+            self.player,
+        )
         # yield SeekBandit(self.player, **self.config),
         # yield BountyShooter(self.player, **self.config)
 
@@ -95,7 +105,6 @@ class Gunfright:
         #         logger.debug("ESCAPE")
         #         self.set_state(states.LOOSE)
         #     self.process_event(e)
-        print(event_id, *args, **kwargs)
         if event_id == events.PLAY:
             self.__on_play()
         if event_id == events.QUIT:

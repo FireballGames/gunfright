@@ -3,96 +3,52 @@ Basic game module
 """
 # import d2lib.reslib
 # import gui
-from . import events, states
 
 
-class Game(events.EventEmitter):
-    def __init__(self, config):
-        super().__init__()
-        self.config = config
-        self.state = states.INIT
+class Game:
+    class Resources:
+        def __init__(self):
+            # self.resources = d2lib.reslib.Reslib()
+            pass
 
-        # self.resources = d2lib.reslib.Reslib()
-        # self.window    = sdl_window.SDLwindow(self.screen)
-        # gui.res = self.resources
-
-    @property
-    def player(self):
-        raise NotImplementedError()
-
-    @property
-    def is_playing(self):
-        return self.state == states.PLAY
-
-    def start(self):
-        """
-        Player starts the game
-        """
-        self.state = states.START
-        self.emit(events.START)
-
-    def next(self):
-        # self.draw_bg()
-        # self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
-        # self.draw_fg()
-        # self.window.draw()
-        raise NotImplementedError()
+    def __init__(self, window, player):
+        # self.state = states.INIT
+        self.window = window  # sdl_window.SDLwindow(self.screen)
+        self.player = player
+        self.res = self.Resources()  # self.resources
+        self.running = True
 
     def run(self):
-        """
-        Run the game
-        """
-        self.state = states.PLAY
-        self.emit(events.PLAY)
+        # self.state = states.PLAY
+        # self.emit(events.PLAY)
+        while self.running:
+            self.window.update()
 
-    def win(self):
-        """
-        Player wins the game
-        """
-        self.state = states.WIN
-        self.emit(events.WIN)
-
-    def loose(self):
-        """
-        Player looses the game
-        """
-        self.state = states.LOOSE
-        self.emit(events.LOOSE)
-
-    def end(self):
-        """
-        Player stops the game
-        """
-        self.emit(events.STOP)
-        self.loose()
+    def stop(self):
+        self.running = False
 
     def quit(self):
-        """
-        Player quits from the game
-        """
-        self.emit(events.QUIT)
+        pass
 
-    # Mini games processing
+    # @property
+    # def is_playing(self):
+    #     return self.state == states.PLAY
 
-    @property
-    def mini_games(self):
-        yield from []
+    # def start(self):
+    #     self.state = states.START
+    #     self.emit(events.START)
 
-    def play_mini_games(self):
-        mini_games = self.mini_games
+    # def next(self):
+    #     # self.draw_bg()
+    #     # self.window.draw_image_pos(self.player.draw(), self.player.images.pos)
+    #     # self.draw_fg()
+    #     # self.window.draw()
+    #     raise NotImplementedError()
 
-        def event_processor(event_id, *args, **kwargs):
-            if event_id == events.WIN:
-                next_mini_game()
-            else:
-                self.emit(event_id, *args, **kwargs)
+    # def win(self):
+    #     self.state = states.WIN
+    #     self.emit(events.WIN)
 
-        def next_mini_game():
-            game = next(mini_games, None)
-
-            if game is None:
-                return
-
-            game.register_event_processor(event_processor)
-            # game.load_level(self.player.level)
-            game.run()
+    # def loose(self):
+    #     self.state = states.LOOSE
+    #     self.emit(events.LOOSE)

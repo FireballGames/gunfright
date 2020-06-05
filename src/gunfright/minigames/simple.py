@@ -1,7 +1,6 @@
 import pygame
 from collections import defaultdict
-from v2.window import event
-from v2.d2game import Game
+from d2game import Game
 from ..player import Player
 from ..missile import Missile
 
@@ -17,7 +16,7 @@ def load_all(*images):
 
 
 class Simple(Game):
-    class Resources:
+    class Resources(Game.Resources):
         def __init__(self):
             self.frames = {
                 Player.LEFT: load_all(
@@ -39,10 +38,8 @@ class Simple(Game):
             self.background = pygame.image.load('res/intro.png')
 
     def __init__(self, window, player, **options):
-        logger.debug("Simple game")
-        super().__init__(window, player, **options)
+        super().__init__(window, player)
         self.objects = []
-        # self.controls = {}
         # self.screen = None
         # self.level = None
         self.bounds = pygame.Rect(15, 15, 800 - 30, 600 - 30)
@@ -127,9 +124,6 @@ class Simple(Game):
             1 if self.player.shoot_direction == self.player.RIGHT else -1,
         ))
 
-    def stop(self):
-        self.running = False
-
     def update(self):
         for missile in self.missiles:
             if self.bounds.left < missile.x < self.bounds.right:
@@ -151,8 +145,3 @@ class Simple(Game):
             self.draw_missile(missile)
         # for o in self.objects:
         #     o.draw(self.window.surface)
-
-    def run(self):
-        logger.debug("Running simple game")
-        while self.running:
-            self.window.update()

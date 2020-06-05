@@ -1,95 +1,205 @@
+import logging
 import pygame
-import gui
-import gui.controls
-import screens.shootmoney
-from config import Config
-from d2game import states
-from d2game.game import Game
-from ..level import ShootBounty
+import random
+# import gui
+# import gui.controls
+# import screens.shootmoney
+# from config import Config
+from d2game import Game
+# from ..level import ShootBounty
+
+
+logger = logging.getLogger('gunfright.bounty')
 
 
 class BountyShooter(Game):
-    def __init__(self, player, config):
-        super().__init__(config)
+    class Resources(Game.Resources):
+        def __init__(self):
+            self.background = pygame.Surface((800, 600))
+            self.background.fill((0, 0, 0))
 
-        print("Shoot money minigames")
-        self.player = player
+            self.pointer = pygame.image.load('res/mouse.png')
+            self.money = pygame.image.load('res/money.png')
 
-        self.controls = {
-            'main': gui.controls.ControlShoot(
-                pos=(1, 1),
-                size=(100, 100)
-            ),
-            'shots': gui.controls.ControlImageList(
-                gui.controls.ControlImage('Revolver'),
-                pos=((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6))
-            ),
-            'lives': gui.controls.ControlImageList(
-                gui.controls.ControlImage('Hat'),
-                pos=((1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1))
-            ),
-            'score': gui.controls.ControlText(
-                '$%s',
-                pos=(0, 0),
-                size=16
+    class Pointer(pygame.sprite.Sprite):
+        def __init__(self, image, area, *groups):
+            super().__init__(*groups)
+
+            self.image = image
+            self.rect = self.image.get_rect()
+            self.area = area.inflate(-self.rect.width, -self.rect.height)
+
+        def move_to(self, x, y):
+            if not self.area.collidepoint(x, y):
+                return
+
+            self.rect.centerx = x
+            self.rect.centery = y
+
+    class Money(pygame.sprite.Sprite):
+        money = pygame.sprite.Group()
+
+        def __init__(self, image, area, *groups):
+            super().__init__(*groups)
+            self.image = image
+            self.rect = self.image.get_rect()
+            self.area = area
+            self.rect.centerx = random.randrange(area.width)
+            self.speed = (
+                random.randint(-4, 4),
+                random.randint(1, 4),
             )
-        }
-        self.screen = None
-        self.level = None
 
-    def run(self):
-        print("Running bounty shooter")
-        gui.g = self
+        def update(self):
+            self.rect = self.rect.move(*self.speed)
 
-        # self.play_sound()
-        self.load_level(self.player.level)
-        super().run()
+    def __init__(
+        self,
+        window,
+        player,
+        bounds=None,
+        level=0,
+        **options,
+    ):
+        logging.debug("Shoot money minigames")
+        super().__init__(window, player)
 
-        self.player.bonus = False
+        pygame.mouse.set_visible(False)
 
-    def on_play(self):
-        gui.gui.clear()
+        self.bounds = bounds or pygame.Rect(0, 0, 800, 600)
+        self.surface = pygame.Surface((self.bounds.width, self.bounds.height))
 
-        super().on_play()
+        self.objects = pygame.sprite.LayeredUpdates()
+        self.pointer = self.Pointer(self.res.pointer, self.surface.get_rect())
+        self.money = pygame.sprite.Group()
+        self.missiles = pygame.sprite.Group()
+        # self.screen = None
+        # self.level = None
 
-        self.screen.show_image(gui.gui.surface)
+        self.objects.add(self.pointer, layer=8)
 
-        pygame.display.flip()
-        pygame.time.delay(2)
-        # self.screen.show_screen(gui.gui.surface)
+        self.load_level(level)
 
-        if not self.screen.showing:
-            self.set_state(states.WIN)
+        # Set Handlers
 
-    def process_event(self, event):
-        super().process_event(event)
+        self.window.quit_handlers.append(self.stop)
+        self.window.update_handlers.append(self.update)
+        self.window.draw_handlers.append(self.draw)
 
-        self.screen.interface.pointer.process_event(event, screens.shootmoney.moneybags)
+        self.window.mouse_move_handlers.append(self.__on_mouse_move)
+        self.window.mouse_button_down_handlers.append(self.__on_mouse_button_down)
 
-    def load_level(self, level):
-        print("Loading level %s" % (level))
+        self.window.keys_handlers[pygame.K_ESCAPE] = [self.stop]
 
-        level_data = Config.level(level)
-        level_screen = Config.get_screen('shootmoney')
-        level_screen.update({
-            'background': level_data["background"],
-            'interface':  gui.i
-        })
+    def add_money(self):
+        if len(self.money) > 5:
+            return None
+        if random.randrange(100) < 50:
+            return None
+        money = self.Money(self.res.money, self.surface.get_rect())
+        self.money.add(money)
 
-        if level_data['type'] == 'bounty':
-            level_data['player'] = self.player
-            self.level = ShootBounty(**level_data)
-        else:
-            self.level = None
+    def cleanup_money(self):
+        for m in self.money:
+            if not m.area.colliderect(m.rect):
+                self.money.remove(m)
 
-        if not self.player.bonus:
-            return
+    def clear(self):
+        self.window.surface.blit(self.res.background, (0, 0))
+        pygame.draw.rect(self.surface, (0, 0, 255), self.surface.get_rect())
+        # self.player.direction = None
+        # self.player.frame_id = 0
 
-        self.screen = screens.shootmoney.ShootMoney(**level_screen)
-        self.screen.init_win()
+    def update(self):
+        # for missile in self.missiles:
+        #     if self.bounds.left < missile.x < self.bounds.right:
+        #         missile.next()
+        #     else:
+        #         self.missiles.pop(self.missiles.index(missile))
+
+        # if self.player.is_jumping:
+        #     self.player.jump()
+
+        self.add_money()
+        self.cleanup_money()
+        self.money.update()
+
+        self.objects.update()
+
+    def draw_main(self, surface):
+        pass
+
+    def draw_shots(self, surface):
+        pass
+
+    def draw_lives(self, surface):
+        pass
+
+    def draw_score(self, surface):
+        pass
 
     def draw(self):
-        self.controls['main'].show()
-        self.controls['shots'].show(self.player.shots)
-        self.controls['lives'].show(self.player.lives)
-        self.controls['score'].show(self.player.score)
+        self.clear()
+
+        # self.screen.show_image(gui.gui.surface)
+
+        # self.controls['main'].show()
+        # self.controls['shots'].show(self.player.shots)
+        # self.controls['lives'].show(self.player.lives)
+        # self.controls['score'].show(self.player.score)
+        self.draw_main(self.surface)
+        self.draw_shots(self.surface)
+        self.draw_lives(self.surface)
+        self.draw_score(self.surface)
+
+        self.money.draw(self.surface)
+
+        # for missile in self.missiles:
+        #     self.draw_missile(missile)
+        self.objects.draw(self.surface)
+
+        self.window.surface.blit(self.surface, self.bounds)
+
+    def stop(self):
+        super().stop()
+        if self.__on_mouse_move in self.window.mouse_move_handlers:
+            self.window.mouse_move_handlers.remove(self.__on_mouse_move)
+        if self.stop in self.window.quit_handlers:
+            self.window.quit_handlers.remove(self.stop)
+        if self.draw in self.window.draw_handlers:
+            self.window.draw_handlers.remove(self.draw)
+        if self.update in self.window.update_handlers:
+            self.window.update_handlers.remove(self.update)
+
+    def load_level(self, level):
+        logging.debug("Loading level {}".format(level))
+
+        # level_data = Config.level(level)
+        # level_screen = Config.get_screen('shootmoney')
+        # level_screen.update({
+        #     'background': level_data["background"],
+        #     'interface':  gui.i
+        # })
+
+        # if level_data['type'] == 'bounty':
+        #     level_data['player'] = self.player
+        #     self.level = ShootBounty(**level_data)
+        # else:
+        #     self.level = None
+
+        # if not self.player.bonus:
+        #     return
+
+        # self.screen = screens.shootmoney.ShootMoney(**level_screen)
+        # self.screen.init_win()
+
+    # Handlers
+
+    def __on_mouse_move(self, event, *args, **kwargs):
+        self.pointer.move_to(*event.pos)
+
+    def __on_mouse_button_down(self, event, *args, **kwargs):
+        if event.button == 1:
+            for m in self.money:
+                if self.pointer.rect.colliderect(m.rect):
+                    self.money.remove(m)
