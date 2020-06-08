@@ -1,11 +1,10 @@
 import pygame
 from d2game import Game
+from .page import Page
 from .resources import Resources
 
 
 class Logo(Game):
-    TIMEOUT = 5000
-
     def __init__(
         self,
         window,
@@ -18,20 +17,28 @@ class Logo(Game):
 
         Resources.load()
 
-        pygame.time.set_timer(pygame.USEREVENT, self.TIMEOUT)
+        self.__page_id = 0
+        self.pages = list(map(Page, Resources.pages))
 
         self.events[pygame.QUIT].append(self.__on_quit)
         self.events[pygame.KEYUP].append(self.__on_play)
-        self.events[pygame.USEREVENT].append(self.__on_play)
+
+    @property
+    def page(self):
+        if self.__page_id >= len(self.pages):
+            self.stop()
+            return None
+
+        return self.pages[self.__page_id]
 
     def __on_quit(self, event):
         self.window.close()
 
     def __on_play(self, event):
-        self.stop()
-
-    def clear(self):
-        self.window.surface.blit(Resources.background, (0, 0))
+        self.__page_id += 1
+        if self.page is not None:
+            self.page.start()
 
     def draw(self):
-        self.clear()
+        if self.page is not None:
+            self.page.draw(self.window.surface)
