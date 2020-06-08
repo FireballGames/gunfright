@@ -15,11 +15,9 @@ logger = logging.getLogger('gunfright.bounty')
 class BountyShooter(Game):
     class Resources(Game.Resources):
         def __init__(self):
-            self.background = pygame.Surface((800, 600))
-            self.background.fill((0, 0, 0))
-
-            self.pointer = pygame.image.load('res/mouse.png')
-            self.money = pygame.image.load('res/money.png')
+            self.background = pygame.image.load('res/bounty/background.png')
+            self.pointer = pygame.image.load('res/bounty/aim.png')
+            self.money = pygame.image.load('res/bounty/money.png')
 
     class Pointer(pygame.sprite.Sprite):
         def __init__(self, image, area, *groups):
@@ -82,14 +80,10 @@ class BountyShooter(Game):
 
         # Set Handlers
 
-        self.window.quit_handlers.append(self.stop)
-        self.window.update_handlers.append(self.update)
-        self.window.draw_handlers.append(self.draw)
-
-        self.window.mouse_move_handlers.append(self.__on_mouse_move)
-        self.window.mouse_button_down_handlers.append(self.__on_mouse_button_down)
-
-        self.window.keys_handlers[pygame.K_ESCAPE] = [self.stop]
+        self.events[pygame.QUIT].append(self.__on_quit)
+        self.events[pygame.KEYUP].append(self.__on_key_up)
+        self.events[pygame.MOUSEMOTION].append(self.__on_mouse_move)
+        self.events[pygame.MOUSEBUTTONDOWN].append(self.__on_mouse_button_down)
 
     def add_money(self):
         if len(self.money) > 5:
@@ -111,6 +105,8 @@ class BountyShooter(Game):
         # self.player.frame_id = 0
 
     def update(self):
+        super().update()
+
         # for missile in self.missiles:
         #     if self.bounds.left < missile.x < self.bounds.right:
         #         missile.next()
@@ -195,10 +191,17 @@ class BountyShooter(Game):
 
     # Handlers
 
-    def __on_mouse_move(self, event, *args, **kwargs):
+    def __on_quit(self, event):
+        self.window.close()
+
+    def __on_key_up(self, event):
+        if event.key == pygame.K_ESCAPE:
+            self.stop()
+
+    def __on_mouse_move(self, event):
         self.pointer.move_to(*event.pos)
 
-    def __on_mouse_button_down(self, event, *args, **kwargs):
+    def __on_mouse_button_down(self, event):
         if event.button == 1:
             for m in self.money:
                 if self.pointer.rect.colliderect(m.rect):

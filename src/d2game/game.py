@@ -3,6 +3,7 @@ Basic game module
 """
 # import d2lib.reslib
 # import gui
+from collections import defaultdict
 
 
 class Game:
@@ -16,19 +17,27 @@ class Game:
         self.window = window  # sdl_window.SDLwindow(self.screen)
         self.player = player
         self.res = self.Resources()  # self.resources
+        self.events = defaultdict(list)
         self.running = True
+
+    def update(self):
+        for event in self.window.get_events():
+            for handler in self.events[event.type]:
+                handler(event)
+
+    def draw(self):
+        pass
+
+    def stop(self):
+        self.running = False
 
     def run(self):
         # self.state = states.PLAY
         # self.emit(events.PLAY)
         while self.running:
+            self.update()
+            self.draw()
             self.window.update()
-
-    def stop(self):
-        self.running = False
-
-    def quit(self):
-        pass
 
     # @property
     # def is_playing(self):

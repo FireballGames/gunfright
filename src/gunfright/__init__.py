@@ -6,7 +6,8 @@ import pygame
 # from d2game import states
 # from d2game.game import Game
 from . import events
-from .minigames.bountyshooter import BountyShooter
+from .minigames.logo import Logo
+from .minigames.bounty import BountyShooter
 from .minigames.simple import Simple
 # from .minigames.seekbandit import SeekBandit
 from .player import Player
@@ -17,13 +18,15 @@ logger = logging.getLogger('gunfright')
 
 
 class Gunfright:
+    screen_size = (256, 192)
+
     def __init__(self, config):
         logger.info("Initializing Gunfright")
 
         self.config = config
         window_config = {
             **self.config.window,
-            'size': (800, 600),
+            'size': self.screen_size,
             'main_theme': self.config.main_theme,
         }
         player_config = self.config.player or {}
@@ -35,13 +38,17 @@ class Gunfright:
     @property
     def mini_games(self):
         logger.info("Next Mini Game")
-        width = 800
-        height = 600
-        offset = 70
+        yield Logo(self.window, self.player)
+        width, height = self.screen_size
         yield BountyShooter(
             self.window,
             self.player,
-            bounds=pygame.Rect(offset, offset, width - offset * 2, height - offset * 2),
+            bounds=pygame.Rect(
+                40,
+                8,
+                width - 40 - 40,
+                height - 8 - 72,
+            ),
         )
         yield Simple(
             self.window,
