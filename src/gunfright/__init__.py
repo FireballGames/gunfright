@@ -7,6 +7,7 @@ import pygame
 # from d2game.game import Game
 from . import events
 from .minigames.logo import Logo
+from .minigames.main_menu import MainMenu
 from .minigames.bounty import BountyShooter
 from .minigames.simple import Simple
 # from .minigames.seekbandit import SeekBandit
@@ -37,9 +38,11 @@ class Gunfright:
 
     @property
     def mini_games(self):
+        width, height = self.screen_size
+
         logger.info("Next Mini Game")
         yield Logo(self.window, self.player)
-        width, height = self.screen_size
+        yield MainMenu(self.window, self.player)
         yield BountyShooter(
             self.window,
             self.player,
