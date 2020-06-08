@@ -7,16 +7,10 @@ from collections import defaultdict
 
 
 class Game:
-    class Resources:
-        def __init__(self):
-            # self.resources = d2lib.reslib.Reslib()
-            pass
-
     def __init__(self, window, player):
         # self.state = states.INIT
         self.window = window  # sdl_window.SDLwindow(self.screen)
         self.player = player
-        self.res = self.Resources()  # self.resources
         self.events = defaultdict(list)
         self.running = True
 

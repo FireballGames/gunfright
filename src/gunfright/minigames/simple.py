@@ -16,9 +16,14 @@ def load_all(*images):
 
 
 class Simple(Game):
-    class Resources(Game.Resources):
-        def __init__(self):
-            self.frames = {
+    class Resources:
+        frames = {}
+        stand = None
+        background = None
+
+        @classmethod
+        def load(cls):
+            cls.frames = {
                 Player.LEFT: load_all(
                     'res/quickdraw.png',
                     'res/quickdraw.png',
@@ -34,8 +39,8 @@ class Simple(Game):
                     'res/quickdraw.png',
                 ),
             }
-            self.stand = pygame.image.load('res/quickdraw.png')
-            self.background = pygame.image.load('res/intro.png')
+            cls.stand = pygame.image.load('res/quickdraw.png')
+            cls.background = pygame.image.load('res/intro.png')
 
     def __init__(self, window, player, **options):
         super().__init__(window, player)
@@ -46,6 +51,7 @@ class Simple(Game):
         self.missiles = []
 
         self.res = self.Resources()
+        self.res.load()
 
         self.window.quit_handlers.append(self.stop)
         self.window.keydown_handlers = defaultdict(list)

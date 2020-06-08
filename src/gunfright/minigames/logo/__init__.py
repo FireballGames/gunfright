@@ -1,11 +1,10 @@
 import pygame
 from d2game import Game
+from .resources import Resources
 
 
 class Logo(Game):
-    class Resources(Game.Resources):
-        def __init__(self):
-            self.background = pygame.image.load('res/logo/logo.png')
+    TIMEOUT = 5000
 
     def __init__(
         self,
@@ -17,17 +16,22 @@ class Logo(Game):
 
         pygame.mouse.set_visible(False)
 
-        self.events[pygame.QUIT].append(self.__quit)
-        self.events[pygame.KEYUP].append(self.__play)
+        Resources.load()
 
-    def __quit(self, event):
+        pygame.time.set_timer(pygame.USEREVENT, self.TIMEOUT)
+
+        self.events[pygame.QUIT].append(self.__on_quit)
+        self.events[pygame.KEYUP].append(self.__on_play)
+        self.events[pygame.USEREVENT].append(self.__on_play)
+
+    def __on_quit(self, event):
         self.window.close()
 
-    def __play(self, event):
+    def __on_play(self, event):
         self.stop()
 
     def clear(self):
-        self.window.surface.blit(self.res.background, (0, 0))
+        self.window.surface.blit(Resources.background, (0, 0))
 
     def draw(self):
         self.clear()
