@@ -4,6 +4,7 @@ Basic game module
 # import d2lib.reslib
 # import gui
 from collections import defaultdict
+from pygame.sprite import LayeredUpdates
 
 
 class Game:
@@ -12,12 +13,15 @@ class Game:
         self.window = window  # sdl_window.SDLwindow(self.screen)
         self.player = player
         self.events = defaultdict(list)
+        self.objects = LayeredUpdates()
         self.running = True
 
     def update(self):
         for event in self.window.get_events():
             for handler in self.events[event.type]:
                 handler(event)
+
+        self.objects.update()
 
     def draw(self):
         pass

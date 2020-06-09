@@ -1,9 +1,9 @@
 import logging
 import pygame
 from d2game import Game
-from .pointer import Pointer
+from gunfright.minigames.bounty.sprites.pointer import Pointer
 from .resources import Resources
-from .shooting_range import ShootingRange
+from gunfright.minigames.bounty.sprites.shooting_range import ShootingRange
 
 
 logger = logging.getLogger('gunfright.bounty')
@@ -32,8 +32,6 @@ class BountyShooter(Game):
 
         pygame.time.set_timer(pygame.USEREVENT, timeout)
 
-        self.objects = pygame.sprite.LayeredUpdates()
-
         self.load_level(level)
 
         self.shooting_range = ShootingRange(self.rect, level)
@@ -55,10 +53,6 @@ class BountyShooter(Game):
 
     def clear(self):
         self.window.surface.blit(Resources.background, (0, 0))
-
-    def update(self):
-        super().update()
-        self.objects.update()
 
     def draw(self):
         self.objects.draw(self.surface)

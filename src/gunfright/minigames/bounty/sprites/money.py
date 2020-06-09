@@ -1,5 +1,5 @@
 import pygame
-from .resources import Resources
+from gunfright.minigames.bounty.resources import Resources
 
 
 class Money(pygame.sprite.Sprite):

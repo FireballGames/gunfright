@@ -1,7 +1,7 @@
 import logging
 import pygame
 import random
-from .money import Money
+from gunfright.minigames.bounty.sprites.money import Money
 
 
 logger = logging.getLogger('gunfright.bounty.shooting_range')
